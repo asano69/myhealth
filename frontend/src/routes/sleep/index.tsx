@@ -4,6 +4,7 @@ import pb from "../../lib/pb";
 import SleepLogForm from "../../components/sleep/SleepLogForm";
 import type { SleepLogRecord } from "../../components/sleep/SleepLogForm";
 import SleepChart from "../../components/sleep/SleepChart";
+import SleepLogTable from "../../components/sleep/SleepLogTable";
 
 const RECENT_LOG_COUNT = 30;
 
@@ -31,6 +32,7 @@ export default function Sleep() {
       <h1 class="mb-4 font-sans text-4xl">Sleep</h1>
       <SleepLogForm onSaved={loadRecent} />
       <SleepChart logs={logs()} />
+      <SleepLogTable logs={logs()} />
     </div>
   );
 }
