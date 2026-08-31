@@ -1,4 +1,8 @@
 import { createSignal, onMount, For, Show } from "solid-js";
+import { TextField } from "@kobalte/core/text-field";
+import { ToggleButton } from "@kobalte/core/toggle-button";
+import Check from "lucide-solid/icons/check";
+import Plus from "lucide-solid/icons/plus";
 import Trash2 from "lucide-solid/icons/trash-2";
 
 import pb from "../../lib/pb";
@@ -31,6 +35,12 @@ export default function Focus() {
   const [title, setTitle] = createSignal("");
   const [submitting, setSubmitting] = createSignal(false);
   const [error, setError] = createSignal("");
+
+  // Id of the task currently being edited inline (double-click to
+  // start), or null when no task is being edited. Only one task can be
+  // edited at a time.
+  const [editingId, setEditingId] = createSignal<string | null>(null);
+  const [editValue, setEditValue] = createSignal("");
 
   const loadTasks = async () => {
     try {
@@ -90,6 +100,29 @@ export default function Focus() {
     }
   };
 
+  const startEdit = (task: FocusTask) => {
+    setEditingId(task.id);
+    setEditValue(task.title);
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  // Saves the edited title, or just closes the editor if the value is
+  // empty or unchanged (no round-trip needed in that case).
+  const commitEdit = async (task: FocusTask) => {
+    const newTitle = editValue().trim();
+    setEditingId(null);
+    if (!newTitle || newTitle === task.title) return;
+    try {
+      const record = await pb
+        .collection("focus_tasks")
+        .update<FocusTask>(task.id, { title: newTitle });
+      setTasks((prev) => prev.map((t) => (t.id === task.id ? record : t)));
+    } catch {
+      setError("Failed to update the task.");
+    }
+  };
+
   return (
     <div class="flex w-full flex-col gap-4 xl:mx-auto xl:max-w-3xl">
       <h1 class="mb-4 font-sans text-4xl">Focus</h1>
@@ -98,18 +131,58 @@ export default function Focus() {
         <For each={tasks()}>
           {(task) => (
             <div class="flex items-center gap-3 py-3">
-              <input
-                type="checkbox"
-                checked={task.done}
+              {/* Kobalte ToggleButton instead of a native checkbox, so
+                  the done/not-done control matches the rest of the
+                  app's Kobalte-based inputs. */}
+              <ToggleButton
+                pressed={task.done}
                 onChange={() => toggleDone(task)}
-                class="h-5 w-5 cursor-pointer"
-              />
-              <span
-                class="flex-1"
-                classList={{ "line-through text-border": task.done }}
+                aria-label={
+                  task.done ? "Mark task as not done" : "Mark task as done"
+                }
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border border-border text-text transition-colors data-[pressed]:border-text data-[pressed]:bg-active-bg"
               >
-                {task.title}
-              </span>
+                <Show when={task.done}>
+                  <Check size={14} />
+                </Show>
+              </ToggleButton>
+
+              {/* Double-click a task's title to rename it inline,
+                  instead of a separate edit button/dialog. */}
+              <Show
+                when={editingId() === task.id}
+                fallback={
+                  <span
+                    class="flex-1 cursor-text"
+                    classList={{ "line-through text-border": task.done }}
+                    onDblClick={() => startEdit(task)}
+                  >
+                    {task.title}
+                  </span>
+                }
+              >
+                <TextField
+                  value={editValue()}
+                  onChange={setEditValue}
+                  class="flex-1"
+                >
+                  <TextField.Input
+                    autofocus
+                    onBlur={() => commitEdit(task)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        commitEdit(task);
+                      } else if (e.key === "Escape") {
+                        e.preventDefault();
+                        cancelEdit();
+                      }
+                    }}
+                    class="w-full rounded-md border border-border bg-field px-2 py-1 text-text"
+                  />
+                </TextField>
+              </Show>
+
               <button
                 type="button"
                 aria-label="Delete task"
@@ -127,23 +200,40 @@ export default function Focus() {
         <p class="text-sm text-border">No tasks yet.</p>
       </Show>
 
-      {/* Hidden once today's 3 tasks are already registered, since
+    {/* Hidden once today's 3 tasks are already registered, since
           this list is deliberately capped -- see MAX_TASKS above. */}
       <Show when={tasks().length < MAX_TASKS}>
-        <form onSubmit={handleAdd} class="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="What do you want to get done today?"
-            value={title()}
-            onInput={(e) => setTitle(e.currentTarget.value)}
-            class="flex-1 rounded-md border border-border bg-field px-3 py-2 text-text"
-          />
-          <button type="submit" class="btn" disabled={submitting()}>
-            {submitting() ? "Adding…" : "Add"}
+        {/* Once at least one task already exists, the add-task input is
+            toned down (lower opacity, no border/background) so it reads
+            as an optional affordance rather than a prompt nagging the
+            user to fill the list. focus-within restores the normal
+            look while actually typing. */}
+        <form
+          onSubmit={handleAdd}
+          class="flex items-center gap-2 transition-opacity focus-within:opacity-100"
+          classList={{ "opacity-50": tasks().length > 0 }}
+        >
+          <TextField value={title()} onChange={setTitle} class="flex-1">
+            <TextField.Input
+              placeholder="What do you want to get done today?"
+              class="w-full rounded-md border border-border bg-field px-3 py-2 text-text"
+              classList={{
+                "border-transparent bg-transparent px-0": tasks().length > 0,
+              }}
+            />
+          </TextField>
+          {/* Plus icon instead of an "Add" label, symmetric with the
+              Trash2 delete button on each task row. */}
+          <button
+            type="submit"
+            aria-label={submitting() ? "Adding…" : "Add task"}
+            class="icon-btn shrink-0"
+            disabled={submitting()}
+          >
+            <Plus size={20} />
           </button>
         </form>
       </Show>
-
       <Show when={error()}>
         <p class="text-sm text-[#dc3545]">{error()}</p>
       </Show>
