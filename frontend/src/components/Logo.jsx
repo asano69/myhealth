@@ -26,21 +26,35 @@ export default function Logo(props) {
     // text-text (see base.css), and --color-text is defined with
     // light-dark() in theme.css, this adapts to light/dark mode with no
     // extra CSS needed here.
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      transform="matrix(1, 0, 0, -1, 0, 0)"
-      style={{ width: `${size()}px`, height: `${size()}px` }}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M21.4155 15.3411C18.5924 17.3495 14.8895 17.5726 11.877 16M2.58445 8.65889C5.41439 6.64566 9.12844 6.42638 12.1448 8.01149M15.3737 14.1243C18.2604 12.305 19.9319 8.97413 19.601 5.51222M8.58184 9.90371C5.72231 11.7291 4.06959 15.0436 4.39878 18.4878M15.5269 10.137C15.3939 6.72851 13.345 3.61684 10.1821 2.17222M8.47562 13.9256C8.63112 17.3096 10.6743 20.392 13.8177 21.8278M19.071 4.92893C22.9763 8.83418 22.9763 15.1658 19.071 19.071C15.1658 22.9763 8.83416 22.9763 4.92893 19.071C1.02369 15.1658 1.02369 8.83416 4.92893 4.92893C8.83418 1.02369 15.1658 1.02369 19.071 4.92893ZM14.8284 9.17157C16.3905 10.7337 16.3905 13.2663 14.8284 14.8284C13.2663 16.3905 10.7337 16.3905 9.17157 14.8284C7.60948 13.2663 7.60948 10.7337 9.17157 9.17157C10.7337 7.60948 13.2663 7.60948 14.8284 9.17157Z"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </svg>
+<svg
+  viewBox="0 0 32 32"
+  fill="none"
+  style={{ width: `${size()}px`, height: `${size()}px` }}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M29.9 17.5C29.7 17.2 29.4 17 29 17C26.8 17 24.7 18 23.4 19.8L22.5 21C21.4 22.3 19.7 23 18 23H15C14.4 23 14 22.6 14 22C14 21.4 14.4 21 15 21H16.9C18.5 21 20 19.7 20 18.1C20 18.1 20 18 20 18C20 17.5 19.5 17 19 17L12.9 17C9.3 17 6.4 18.6 4.8 21.2L2.1 25.4C1.9 25.7 1.9 26.1 2.1 26.4L5.1 31.4C5.2 31.6 5.5 31.8 5.7 31.9C5.8 31.9 5.8 31.9 5.9 31.9C6.1 31.9 6.3 31.8 6.5 31.7C10.3 29.2 14.7 27.9 19.2 27.9C22.5 27.9 25.5 26.1 27.1 23.2L29.8 18.4C30 18.2 30 17.8 29.9 17.5Z"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M12.9 15C12.9 15 12.9 15 12.9 15L19 15C20.6 15 22 16.3 22 17.9L22 18.1C22 18.1 22 18.1 22 18.1L28.2 11.7C30.6 9.2 30.6 5.3 28.2 2.8C27 1.7 25.5 1 23.9 1C22.3 1 20.7 1.7 19.5 2.9L19 3.4L18.5 2.9C17.3 1.7 15.8 1 14.1 1C12.5 1 11 1.7 9.8 2.9C7.4 5.4 7.4 9.3 9.8 11.8L12.9 15Z"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M14 9H15.6L17.3 7.3C17.5 7.1 17.8 7 18.2 7C18.5 7.1 18.8 7.3 18.9 7.5L19.9 9.5L21.1 6.6C21.2 6.3 21.5 6 21.9 6C22.3 6 22.6 6.1 22.8 6.4L24.8 9.4"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
+
   );
   // Scales with the icon: at the old default size (40px), this works
   // out to 24px, matching the previous fixed "text-2xl" class.
