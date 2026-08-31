@@ -2,6 +2,7 @@ import { Router, Route } from "@solidjs/router";
 
 import AppShell from "../components/layout/AppShell";
 import Home from "../routes/Home";
+import Sleep from "../routes/sleep/Sleep";
 import NoteEditor from "../routes/contexts/Editor";
 import ContextNotes from "../routes/contexts/Notes";
 
@@ -21,6 +22,7 @@ export default function AppRouter() {
           context per day" rule enforced by the notes collection's
           unique index on (context, date). "contexts" (plural), matching
           the "/contexts/:contextName" list route below. */}
+      <Route path="/sleep" component={Sleep} />
       <Route
         path="/contexts/:contextName/:year/:month/:day"
         component={NoteEditor}

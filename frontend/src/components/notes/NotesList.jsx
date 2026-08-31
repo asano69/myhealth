@@ -62,10 +62,7 @@ function NoteEditorView(props) {
   // below the text instead, since the row's own py-4 alone reads as
   // too tight underneath multi-line content.
   return (
-    <div
-      ref={mountEditor}
-      class="ProseMirror notes-editor-content pt-0 pb-6"
-    />
+    <div ref={mountEditor} class="ProseMirror notes-editor-content pt-0 pb-6" />
   );
 }
 

@@ -97,7 +97,11 @@ export default function ContextNotes() {
           <ActionsMenu
             label="Context actions"
             items={[
-              { label: "Rename", icon: Pencil, onSelect: () => setEditOpen(true) },
+              {
+                label: "Rename",
+                icon: Pencil,
+                onSelect: () => setEditOpen(true),
+              },
               {
                 label: "Delete",
                 icon: Trash2,

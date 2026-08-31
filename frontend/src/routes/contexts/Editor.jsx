@@ -78,14 +78,12 @@ export default function Editor() {
 
 async function fetchNote([contextId, date]) {
   try {
-    return await pb
-      .collection("notes")
-      .getFirstListItem(
-        pb.filter("context = {:contextId} && date = {:date}", {
-          contextId,
-          date,
-        }),
-      );
+    return await pb.collection("notes").getFirstListItem(
+      pb.filter("context = {:contextId} && date = {:date}", {
+        contextId,
+        date,
+      }),
+    );
   } catch {
     // No note for this context/date yet; Editor starts a blank one.
     return null;
@@ -303,7 +301,10 @@ function NoteForm(props) {
     // min-h-0 lets this shrink to MainLayout's available height instead
     // of growing to fit content, so the editor pane below can flex-1
     // and scroll internally rather than the whole page scrolling.
-    <form onSubmit={handleSave} class="flex h-full min-h-0 w-full flex-col gap-4">
+    <form
+      onSubmit={handleSave}
+      class="flex h-full min-h-0 w-full flex-col gap-4"
+    >
       <div class="flex items-center gap-3">
         {/* Back to this context's notes list. */}
         <A

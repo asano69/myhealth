@@ -13,7 +13,10 @@ import Ellipsis from "lucide-solid/icons/ellipsis";
 export default function ActionsMenu(props) {
   return (
     <DropdownMenu>
-      <DropdownMenu.Trigger aria-label={props.label ?? "Actions"} class="icon-btn">
+      <DropdownMenu.Trigger
+        aria-label={props.label ?? "Actions"}
+        class="icon-btn"
+      >
         <Ellipsis size={24} />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

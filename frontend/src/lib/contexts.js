@@ -39,9 +39,7 @@ export async function createContext(name) {
 }
 
 export async function renameContext(id, name) {
-  const record = await pb
-    .collection("contexts")
-    .update(id, { context: name });
+  const record = await pb.collection("contexts").update(id, { context: name });
   setState("contexts", (list) =>
     sortByName(list.map((c) => (c.id === id ? record : c))),
   );
