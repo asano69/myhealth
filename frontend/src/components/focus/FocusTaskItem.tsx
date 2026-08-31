@@ -118,7 +118,7 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
                   cancelEdit();
                 }
               }}
-              class="w-full rounded-md border border-border bg-field px-2 py-1 text-text"
+              class="w-full rounded-md border border-transparent bg-transparent px-0 py-2 text-text"
             />
           </TextField>
         </Show>

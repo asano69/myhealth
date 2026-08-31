@@ -69,9 +69,6 @@ export default function Focus() {
         </For>
       </div>
 
-      <Show when={tasks().length === 0}>
-        <p class="text-sm text-border">No tasks yet.</p>
-      </Show>
 
       {/* Hidden once today's 3 tasks are already registered, since
           this list is deliberately capped -- see MAX_TASKS above. */}
