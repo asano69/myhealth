@@ -25,7 +25,7 @@ export default function TopBar(props) {
 
   return (
     <header class="sticky top-0 z-40 p-2  border-b border-border bg-nav">
-      <div class="flex justify-between px-8">
+      <div class="flex justify-between px-2 md:px-8">
         <div class="flex items-center gap-3">
           {/* Toggle button only exists on mobile; on desktop the
               sidebar is always visible so there's nothing to toggle. */}
@@ -40,7 +40,9 @@ export default function TopBar(props) {
               {props.sidebarOpen ? <X size={30} /> : <Menu size={30} />}
             </button>
           </Show>
-          <Logo showTitle linkable />
+          {/* Version hidden on mobile: there isn't room for it next to
+              the hamburger toggle and title. */}
+          <Logo showTitle linkable showVersion={!props.isMobile} />
         </div>
 
         <nav class="flex items-center gap-1">
