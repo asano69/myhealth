@@ -977,7 +977,9 @@ func init() {
 					}
 				],
 				"id": "pbc_2604438987",
-				"indexes": [],
+				"indexes": [
+					"CREATE UNIQUE INDEX ` + "`" + `idx_7xr4q4hao5` + "`" + ` ON ` + "`" + `sleep_logs` + "`" + ` (` + "`" + `date` + "`" + `)"
+				],
 				"listRule": null,
 				"name": "sleep_logs",
 				"system": false,
