@@ -18,11 +18,11 @@ all: # (*) Build frontend assets and start the server
 
 .PHONY: frontend-deps
 frontend-deps:
-	cd frontend && pnpm install
+	cd frontend && bun install
 
 .PHONY: build-frontend
 build-frontend: frontend-deps
-	cd frontend && pnpm run build
+	cd frontend && bun run build
 
 .PHONY: build
 build: build-frontend
@@ -41,27 +41,27 @@ server:
 # port: 3001
 .PHONY: dev-front
 dev-front: clean
-	npx concurrently -n "frontend,backend" -c "blue,green" "cd frontend && pnpm dev" "go run ./cmd/$(BINARY) serve --dev"
+	bunx concurrently -n "frontend,backend" -c "blue,green" "cd frontend && bun dev" "go run ./cmd/$(BINARY) serve --dev"
 
 # port: 3000
 .PHONY: dev-back
 dev-back: clean
-	npx concurrently -n "frontend,backend" -c "blue,green" "cd frontend && pnpm watch" "air"
+	bunx concurrently -n "frontend,backend" -c "blue,green" "cd frontend && bun watch" "air"
 
 
 .PHONY: test
 test:
-	#cd frontend && pnpm test
+	#cd frontend && bun test
 	go test -race ./...
 
 lint:
 	golangci-lint run
-	cd frontend && pnpm run lint
+	cd frontend && bun run lint
 
 
 
 format:
-	cd frontend && pnpm exec prettier --write "src/**/*.{js,jsx,css}"
+	cd frontend && bunx prettier --write "src/**/*.{js,jsx,ts,tsx,css}"
 
 # 本番では、後方互換性のために残しておいたほうが良いかも。
 migrate-collections:

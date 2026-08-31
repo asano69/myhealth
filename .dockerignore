@@ -4,8 +4,7 @@
 !cmd/
 !internal/
 !package.json
-!pnpm-lock.yaml
-!pnpm-workspace.yaml
+!bun.lock
 !scripts/
 !frontend/
 !migrations/
