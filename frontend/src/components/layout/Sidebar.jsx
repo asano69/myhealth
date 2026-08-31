@@ -40,9 +40,9 @@ export default function Sidebar(props) {
         <nav class="p-2">
           <A
             href="/sleep"
-            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-md text-text transition-colors hover:bg-hover-bg"
+            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-lg text-text transition-colors hover:bg-hover-bg"
           >
-            <BedSingle size={18} />
+            <BedSingle size={24} />
             Sleep
           </A>
         </nav>
