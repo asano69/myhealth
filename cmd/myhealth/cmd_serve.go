@@ -16,7 +16,7 @@ import (
 //
 // --host/--port are optional overrides on top of config.Load()'s env-based
 // config. cmd.Flags().Changed is checked so an unset flag never clobbers a
-// value that came from KAIROS_SERVER_HOST/KAIROS_SERVER_PORT.
+// value that came from MYHEALTH_SERVER_HOST/MYHEALTH_SERVER_PORT.
 func serveCmd(app *pocketbase.PocketBase) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "serve",
@@ -45,8 +45,8 @@ func serveCmd(app *pocketbase.PocketBase) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String("host", "", "Server host, overrides KAIROS_SERVER_HOST")
-	cmd.Flags().Int("port", 0, "Server port, overrides KAIROS_SERVER_PORT")
+	cmd.Flags().String("host", "", "Server host, overrides MYHEALTH_SERVER_HOST")
+	cmd.Flags().Int("port", 0, "Server port, overrides MYHEALTH_SERVER_PORT")
 
 	return cmd
 }

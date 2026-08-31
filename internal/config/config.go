@@ -23,17 +23,17 @@ type Config struct {
 //
 // Recognised variables:
 //
-//	KAIROS_SERVER_HOST         default "0.0.0.0"
-//	KAIROS_SERVER_PORT         default 3000
+//	MYHEALTH_SERVER_HOST         default "0.0.0.0"
+//	MYHEALTH_SERVER_PORT         default 3000
 func Load() (*Config, error) {
-	port, err := envInt("KAIROS_SERVER_PORT", 3000)
+	port, err := envInt("MYHEALTH_SERVER_PORT", 3000)
 	if err != nil {
 		return nil, err
 	}
 
 	cfg := &Config{
 		Server: ServerConfig{
-			Host: envString("KAIROS_SERVER_HOST", "0.0.0.0"),
+			Host: envString("MYHEALTH_SERVER_HOST", "0.0.0.0"),
 			Port: port,
 		},
 	}

@@ -14,7 +14,7 @@ import (
 // dataDirEnvVar lets the data directory be set via environment variable
 // instead of always requiring the "--dir" flag. If unset, PocketBase
 // falls back to its own default (a "pb_data" folder next to the binary).
-const dataDirEnvVar = "KAIROS_DATA_DIR"
+const dataDirEnvVar = "MYHEALTH_DATA_DIR"
 
 func main() {
 	app := pocketbase.NewWithConfig(pocketbase.Config{
