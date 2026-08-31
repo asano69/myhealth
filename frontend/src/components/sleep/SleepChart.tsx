@@ -62,10 +62,25 @@ export default function SleepChart(props: SleepChartProps) {
       .domain([minutesExtent[0] - 30, minutesExtent[1] + 30])
       .range([0, innerHeight]);
 
-    // Domain is [1,4] (worst to best satisfaction) but the range is
-    // reversed, so a bad night (1) draws a bigger point than a good
-    // night (4).
-    const radius = d3.scaleLinear().domain([1, 4]).range([10, 4]);
+    // Satisfaction only ever takes the integer values 1-4, so each one
+    // maps to a fixed stop on a diverging red/blue scale (dark red ->
+    // light red -> light blue -> dark blue), the same style used for
+    // diverging data in scientific plots. Colors are ColorBrewer's
+    // RdBu 4-class palette. Dark mode brightens each stop so it still
+    // reads against a dark background; the two palettes are combined
+    // via CSS light-dark(), same pattern as theme.css.
+    const RDBU_LIGHT = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
+    const RDBU_DARK = RDBU_LIGHT.map((c) =>
+      d3.color(c).brighter(1).formatHex(),
+    );
+    const colorLight = d3
+      .scaleOrdinal<number, string>()
+      .domain([1, 2, 3, 4])
+      .range(RDBU_LIGHT);
+    const colorDark = d3
+      .scaleOrdinal<number, string>()
+      .domain([1, 2, 3, 4])
+      .range(RDBU_DARK);
 
     const g = svg
       .attr("width", WIDTH)
@@ -91,9 +106,13 @@ export default function SleepChart(props: SleepChartProps) {
       .join("circle")
       .attr("cx", (d) => x(d.index))
       .attr("cy", (d) => y(d.minutes))
-      .attr("r", (d) => radius(d.satisfaction))
-      .attr("fill", "var(--color-text)")
-      .attr("fill-opacity", 0.7);
+      .attr("r", 6)
+      .style(
+        "fill",
+        (d) =>
+          `light-dark(${colorLight(d.satisfaction)}, ${colorDark(d.satisfaction)})`,
+      )
+      .attr("fill-opacity", 0.85);
   });
 
   onCleanup(() => {
