@@ -913,20 +913,6 @@ func init() {
 						"type": "text"
 					},
 					{
-						"cascadeDelete": true,
-						"collectionId": "pbc_3961493164",
-						"help": "",
-						"hidden": false,
-						"id": "relation3797779838",
-						"maxSelect": 0,
-						"minSelect": 0,
-						"name": "context",
-						"presentable": false,
-						"required": true,
-						"system": false,
-						"type": "relation"
-					},
-					{
 						"autogeneratePattern": "",
 						"help": "",
 						"hidden": false,
@@ -937,84 +923,37 @@ func init() {
 						"pattern": "",
 						"presentable": false,
 						"primaryKey": false,
-						"required": true,
-						"system": false,
-						"type": "text"
-					},
-					{
-						"help": "",
-						"hidden": false,
-						"id": "json3485334036",
-						"maxSize": 0,
-						"name": "note",
-						"presentable": false,
 						"required": false,
 						"system": false,
-						"type": "json"
-					},
-					{
-						"hidden": false,
-						"id": "autodate2990389176",
-						"name": "created",
-						"onCreate": true,
-						"onUpdate": false,
-						"presentable": false,
-						"system": false,
-						"type": "autodate"
-					},
-					{
-						"hidden": false,
-						"id": "autodate3332085495",
-						"name": "updated",
-						"onCreate": true,
-						"onUpdate": true,
-						"presentable": false,
-						"system": false,
-						"type": "autodate"
-					}
-				],
-				"id": "pbc_3395098727",
-				"indexes": [],
-				"listRule": null,
-				"name": "notes",
-				"system": false,
-				"type": "base",
-				"updateRule": null,
-				"viewRule": null
-			},
-			{
-				"createRule": null,
-				"deleteRule": null,
-				"fields": [
-					{
-						"autogeneratePattern": "[a-z0-9]{15}",
-						"help": "",
-						"hidden": false,
-						"id": "text3208210256",
-						"max": 15,
-						"min": 15,
-						"name": "id",
-						"pattern": "^[a-z0-9]+$",
-						"presentable": false,
-						"primaryKey": true,
-						"required": true,
-						"system": true,
 						"type": "text"
 					},
 					{
 						"autogeneratePattern": "",
 						"help": "",
 						"hidden": false,
-						"id": "text3797779838",
-						"max": 100,
+						"id": "text1872009285",
+						"max": 0,
 						"min": 0,
-						"name": "context",
-						"pattern": "^[A-Za-z0-9._~-]+$",
-						"presentable": true,
+						"name": "time",
+						"pattern": "",
+						"presentable": false,
 						"primaryKey": false,
 						"required": false,
 						"system": false,
 						"type": "text"
+					},
+					{
+						"help": "",
+						"hidden": false,
+						"id": "number2324565011",
+						"max": null,
+						"min": null,
+						"name": "satisfaction",
+						"onlyInt": false,
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "number"
 					},
 					{
 						"hidden": false,
@@ -1037,12 +976,10 @@ func init() {
 						"type": "autodate"
 					}
 				],
-				"id": "pbc_3961493164",
-				"indexes": [
-					"CREATE UNIQUE INDEX ` + "`" + `idx_rsoaozuhfp` + "`" + ` ON ` + "`" + `contexts` + "`" + ` (` + "`" + `context` + "`" + `)"
-				],
+				"id": "pbc_2604438987",
+				"indexes": [],
 				"listRule": null,
-				"name": "contexts",
+				"name": "sleep_logs",
 				"system": false,
 				"type": "base",
 				"updateRule": null,
