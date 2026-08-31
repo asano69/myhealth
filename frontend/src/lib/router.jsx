@@ -2,7 +2,7 @@ import { Router, Route } from "@solidjs/router";
 
 import AppShell from "../components/layout/AppShell";
 import Home from "../routes/Home";
-import Sleep from "../routes/sleep/Sleep";
+import Sleep from "../routes/sleep";
 import NoteEditor from "../routes/contexts/Editor";
 import ContextNotes from "../routes/contexts/Notes";
 
