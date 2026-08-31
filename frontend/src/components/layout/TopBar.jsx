@@ -4,6 +4,7 @@ import Menu from "lucide-solid/icons/menu";
 import X from "lucide-solid/icons/x";
 import Plus from "lucide-solid/icons/plus";
 import Logo from "../Logo";
+import ThemeToggle from "./ThemeToggle";
 import UserMenu from "./UserMenu";
 import PromptDialog from "../dialogs/PromptDialog";
 import { createContext } from "../../lib/contexts";
@@ -51,6 +52,7 @@ export default function TopBar(props) {
           >
             <Plus size={24} />
           </button>
+          <ThemeToggle />
           <UserMenu />
         </nav>
       </div>

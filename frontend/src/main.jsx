@@ -8,6 +8,7 @@ import "@fontsource/fraunces/500.css";
 // Order matters: tokens.css defines the CSS custom properties every other
 // stylesheet consumes via var().
 import "./styles/index.css";
+import "./lib/theme";
 import AppRouter from "./lib/router";
 import AuthGate from "./lib/auth";
 
