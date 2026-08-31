@@ -1,7 +1,7 @@
 import { createSignal, createMemo, onMount, For, Show } from "solid-js";
 import { A } from "@solidjs/router";
 
-import Moon from "lucide-solid/icons/moon";
+import BedSingle from "lucide-solid/icons/bed-single";
 
 import { contexts, contextsLoaded, loadContexts } from "../../lib/contexts";
 import Loading from "../Loading";
@@ -42,7 +42,7 @@ export default function Sidebar(props) {
             href="/sleep"
             class="flex items-center gap-2 rounded-md px-2 py-1.5 text-md text-text transition-colors hover:bg-hover-bg"
           >
-            <Moon size={18} />
+            <BedSingle size={18} />
             Sleep
           </A>
         </nav>
