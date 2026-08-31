@@ -1,0 +1,39 @@
+body {
+  margin: 1rem;
+}
+
+form {
+  margin: 4rem;
+}
+
+
+input {
+  font-size: 1rem;
+}
+
+select {
+  font-size: 1rem;
+}
+
+button {
+ font-size: 1rem;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: auto;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid;
+  vertical-align: middle;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
