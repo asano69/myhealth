@@ -1,59 +1,76 @@
-import { createSignal, createMemo, onMount, For, Show } from "solid-js";
+import { onMount, For, Show } from "solid-js";
 import { A } from "@solidjs/router";
 
 import BedSingle from "lucide-solid/icons/bed-single";
 import Focus from "lucide-solid/icons/cone";
-import { contexts, contextsLoaded, loadContexts } from "../../lib/contexts";
-import Loading from "../Loading";
+import { loadContexts } from "../../lib/contexts";
+
+// Static top-level nav items, in the order they're shown. Kept as plain
+// data so each entry is just a {href, label, icon} tuple instead of
+// duplicating the same <A> markup per page.
+const NAV_ITEMS = [
+  { href: "/sleep", label: "Sleep", icon: BedSingle },
+  { href: "/focus", label: "Focus", icon: Focus },
+];
 
 export default function Sidebar(props) {
-  const [query, setQuery] = createSignal("");
-
+  // Populates the shared contexts store (lib/contexts.js) once on
+  // mount. Sidebar no longer renders the contexts list itself, but this
+  // remains the app's single fetch trigger -- Editor/Notes pages rely
+  // on the store already being loaded (see contextsLoaded()).
   onMount(() => {
     loadContexts();
   });
 
-  const filteredContexts = createMemo(() => {
-    const q = query().trim().toLowerCase();
-    if (!q) return contexts();
-    return contexts().filter((context) =>
-      context.context.toLowerCase().includes(q),
-    );
-  });
-
   return (
-    <Show when={props.open}>
+    <>
+      {/* Overlay only exists on mobile, where the sidebar floats above
+          the page instead of sitting in the flex layout. Kept mounted
+          while isMobile stays true so its opacity can transition
+          in/out instead of popping in/out with the sidebar. */}
       <Show when={props.isMobile}>
         <div
-          class="absolute inset-0 z-20 bg-black/40"
+          class="absolute inset-0 z-20 bg-black/40 transition-opacity duration-200"
+          classList={{ "pointer-events-none opacity-0": !props.open }}
           onClick={props.onClose}
         />
       </Show>
+
+      {/* Always mounted (not conditionally rendered via <Show>) so the
+          transform transition below actually animates open <-> closed
+          instead of the element just appearing/disappearing. On mobile
+          it's translated off-screen when closed; on desktop `open` is
+          always true (see MainLayout), so it never moves. */}
       <aside
+        aria-hidden={props.isMobile && !props.open}
         classList={{
-          "absolute inset-y-0 left-0 z-30 shadow-popover": props.isMobile,
+          "absolute inset-y-0 left-0 z-30": props.isMobile,
+          // Shadow only while actually visible: it's dropped entirely
+          // once closed instead of just relying on -translate-x-full to
+          // carry it off-screen, since the shadow's blur radius would
+          // otherwise still bleed a few pixels into the viewport from
+          // just past the left edge.
+          "shadow-popover": props.isMobile && props.open,
+          "-translate-x-full": props.isMobile && !props.open,
         }}
-        class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg"
+        class="flex h-full min-h-0 w-64 flex-col border-r border-border bg-bg transition-transform duration-200 ease-in-out"
       >
-        {/* Static top-level nav items, separate from the dynamic
-            contexts list below. */}
         <nav class="p-2 text-md">
-          <A
-            href="/sleep"
-            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-text transition-colors hover:bg-hover-bg"
-          >
-            <BedSingle size={20} />
-            Sleep
-          </A>
-          <A
-            href="/focus"
-            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-text transition-colors hover:bg-hover-bg"
-          >
-            <Focus size={20} />
-            Focus
-          </A>
+          <For each={NAV_ITEMS}>
+            {(item) => (
+              <A
+                href={item.href}
+                end
+                activeClass="bg-active-bg"
+                class="flex items-center gap-2 rounded-md px-2 py-1.5 text-text transition-colors hover:bg-hover-bg"
+              >
+                <item.icon size={20} />
+                {item.label}
+              </A>
+            )}
+          </For>
         </nav>
       </aside>
-    </Show>
+    </>
   );
 }
