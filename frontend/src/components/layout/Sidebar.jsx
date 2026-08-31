@@ -2,7 +2,7 @@ import { createSignal, createMemo, onMount, For, Show } from "solid-js";
 import { A } from "@solidjs/router";
 
 import BedSingle from "lucide-solid/icons/bed-single";
-
+import Goal from "lucide-solid/icons/mouse-pointer-2";
 import { contexts, contextsLoaded, loadContexts } from "../../lib/contexts";
 import Loading from "../Loading";
 
@@ -37,13 +37,20 @@ export default function Sidebar(props) {
       >
         {/* Static top-level nav items, separate from the dynamic
             contexts list below. */}
-        <nav class="p-2">
+        <nav class="p-2 text-md">
           <A
             href="/sleep"
-            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-lg text-text transition-colors hover:bg-hover-bg"
+            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-text transition-colors hover:bg-hover-bg"
           >
-            <BedSingle size={24} />
+            <BedSingle size={20} />
             Sleep
+          </A>
+          <A
+            href="/focus"
+            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-text transition-colors hover:bg-hover-bg"
+          >
+            <Goal size={20} />
+            Focus
           </A>
         </nav>
       </aside>
