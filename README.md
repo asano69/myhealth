@@ -4,7 +4,7 @@
 
 <img src="frontend/public/favicon.svg" width="100" align="right" />
 
-- このプロジェクトの目的は、健康ログノートをつくることです。
+- このプロジェクトの目的は、個人的な健康ログノートをつくることです。
 - このアプリは、SPA＋CSRの個人向けのアプリです。
 
 ## Purpose
