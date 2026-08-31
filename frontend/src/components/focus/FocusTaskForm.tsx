@@ -10,6 +10,7 @@ export interface FocusTaskRecord {
   date: string; // "YYYY-MM-DD"
   title: string;
   done: boolean;
+  position: number;
   created: string;
   updated: string;
 }
@@ -21,6 +22,10 @@ export interface FocusTaskFormProps {
   // optional affordance rather than a prompt nagging the user to fill
   // the list (see classList below).
   hasExistingTasks: boolean;
+  // Position to store on the new task, so it's appended after every
+  // existing task regardless of any gaps left by deleting or
+  // reordering earlier tasks (see routes/focus/index.tsx).
+  nextPosition: number;
   onAdded: (record: FocusTaskRecord) => void;
 }
 
@@ -44,6 +49,7 @@ export default function FocusTaskForm(props: FocusTaskFormProps) {
           date: props.date,
           title: title().trim(),
           done: false,
+          position: props.nextPosition,
         });
       props.onAdded(record);
       setTitle("");
