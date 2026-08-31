@@ -87,15 +87,18 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
           </Show>
         </ToggleButton>
 
-        {/* Double-click a task's title to rename it inline, instead of
-            a separate edit button/dialog. */}
+        {/* Click a task's title to rename it inline, instead of a
+            separate edit button/dialog. */}
         <Show
           when={editing()}
           fallback={
+            // Matches TextField.Input's border/padding below (border
+            // border-transparent py-2) so the row's height doesn't
+            // shift when swapping between display and edit mode.
             <span
-              class="flex-1 cursor-text"
+              class="flex-1 cursor-text border border-transparent py-2"
               classList={{ "line-through text-border": props.task.done }}
-              onDblClick={startEdit}
+              onClick={startEdit}
             >
               {props.task.title}
             </span>
