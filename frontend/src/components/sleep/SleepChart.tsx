@@ -63,24 +63,24 @@ export default function SleepChart(props: SleepChartProps) {
       .range([0, innerHeight]);
 
     // Satisfaction only ever takes the integer values 1-4, so each one
-    // maps to a fixed stop on a diverging red/blue scale (dark red ->
-    // light red -> light blue -> dark blue), the same style used for
-    // diverging data in scientific plots. Colors are ColorBrewer's
-    // RdBu 4-class palette. Dark mode brightens each stop so it still
-    // reads against a dark background; the two palettes are combined
-    // via CSS light-dark(), same pattern as theme.css.
-    const RDBU_LIGHT = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
-    const RDBU_DARK = RDBU_LIGHT.map((c) =>
-      d3.color(c).brighter(1).formatHex(),
+    // maps to a fixed stop on a diverging red/blue scale (deep red ->
+    // light red -> light blue -> deep blue), the same style used for
+    // diverging data in scientific plots. Dark mode darkens each stop
+    // (rather than brightening) so the points don't glare against a
+    // dark background; the two palettes are combined via CSS
+    // light-dark(), same pattern as theme.css.
+    const REDBLUE_LIGHT = ["#ff1414", "#ff4d4d", "#4570ff", "#2440f2"];
+    const REDBLUE_DARK = REDBLUE_LIGHT.map((c) =>
+      d3.color(c).darker(1).formatHex(),
     );
     const colorLight = d3
       .scaleOrdinal<number, string>()
       .domain([1, 2, 3, 4])
-      .range(RDBU_LIGHT);
+      .range(REDBLUE_LIGHT);
     const colorDark = d3
       .scaleOrdinal<number, string>()
       .domain([1, 2, 3, 4])
-      .range(RDBU_DARK);
+      .range(REDBLUE_DARK);
 
     const g = svg
       .attr("width", WIDTH)

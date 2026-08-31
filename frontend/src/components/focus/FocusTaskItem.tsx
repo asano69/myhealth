@@ -79,9 +79,12 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
   };
 
   return (
+    // relative gives the handle below a positioning context, so it can
+    // sit outside the row's own flex flow (see the handle's absolute
+    // positioning) instead of pushing the checkbox to the right.
     <div
       ref={props.rowRef}
-      class="flex flex-col gap-1 py-3 transition-opacity"
+      class="relative flex flex-col gap-1 py-3 transition-opacity"
       classList={{ "opacity-40": props.dragging }}
     >
       <div class="flex items-center gap-3">
@@ -90,11 +93,15 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
             (mobile) and mouse (desktop). Actual reordering happens in
             the parent, which tracks every row's position (see
             rowRef/onDragStart above). touch-none stops the browser
-            from scrolling the page while dragging on mobile. */}
+            from scrolling the page while dragging on mobile.
+            Positioned absolute and shifted left of the row (outside its
+            normal padding) so it doesn't take up flex space -- the
+            checkbox right after it stays flush with the row's own left
+            edge, lining up with the page's h1 above. */}
         <button
           type="button"
           aria-label="Drag to reorder"
-          class="icon-btn shrink-0 cursor-grab touch-none active:cursor-grabbing"
+          class="icon-btn absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 cursor-grab touch-none active:cursor-grabbing"
           onPointerDown={props.onDragStart}
         >
           <GripVertical size={18} />
