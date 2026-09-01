@@ -69,7 +69,7 @@ export default function SleepChart(props: SleepChartProps) {
     // (rather than brightening) so the points don't glare against a
     // dark background; the two palettes are combined via CSS
     // light-dark(), same pattern as theme.css.
-    const REDBLUE_LIGHT = ["#ff1414", "#ff4d4d", "#4570ff", "#2440f2"];
+    const REDBLUE_LIGHT =  ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
     const REDBLUE_DARK = REDBLUE_LIGHT.map((c) =>
       d3.color(c).darker(1).formatHex(),
     );
