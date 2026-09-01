@@ -137,7 +137,7 @@ export default function FocusHeatmap() {
   });
 
   return (
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 rounded-md border border-border p-2">
       {/* Plain flexbox (row of week-columns, each a column of 7
           day-cells) instead of CSS grid: grid's implicit auto-sized
           column tracks left large, uneven gaps between weeks since the
@@ -146,7 +146,7 @@ export default function FocusHeatmap() {
           weeks can run wider than the page on small screens. Month
           labels and weekday labels scroll along with the grid instead
           of staying pinned, to keep the layout simple. */}
-      <div class="overflow-x-auto pb-1">
+      <div class="overflow-x-auto ">
         <div class="flex w-max flex-col gap-0.5">
           {/* Month labels row. The leading spacer matches the weekday
               label column's width+gap below so columns line up. */}
