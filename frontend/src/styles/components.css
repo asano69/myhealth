@@ -51,7 +51,7 @@
   }
 
   .notes-editor-content {
-    @apply p-3 text-text outline-none;
+    @apply p-3 pb-10 text-text outline-none;
   }
 
   /* Mirrors notes-toolbar (border-b/rounded-t) but on the opposite

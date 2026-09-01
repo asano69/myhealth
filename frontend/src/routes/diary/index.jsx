@@ -1,5 +1,4 @@
 import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
-import Trash2 from "lucide-solid/icons/trash-2";
 import Save from "lucide-solid/icons/save";
 import Check from "lucide-solid/icons/check";
 import Undo2 from "lucide-solid/icons/undo-2";
@@ -8,9 +7,6 @@ import Bold from "lucide-solid/icons/bold";
 import Italic from "lucide-solid/icons/italic";
 import UnderlineIcon from "lucide-solid/icons/underline";
 import Strikethrough from "lucide-solid/icons/strikethrough";
-import CodeIcon from "lucide-solid/icons/code";
-import Heading2 from "lucide-solid/icons/heading-2";
-import Quote from "lucide-solid/icons/quote";
 import List from "lucide-solid/icons/list";
 import ListOrdered from "lucide-solid/icons/list-ordered";
 import "prosekit/basic/style.css";
@@ -22,7 +18,6 @@ import { ProseKit, useEditorDerivedValue } from "prosekit/solid";
 import pb from "../../lib/pb";
 import { todayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
-import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 import DateNav from "../../components/common/DateNav";
 
 // Diary is a single rich-text entry per day, keyed by date only. The
@@ -35,7 +30,7 @@ export default function Diary() {
   // selectedDate as the resource's source: createResource automatically
   // refetches whenever it changes, so navigating days is enough to load
   // that day's entry without any extra wiring.
-  const [entry, { refetch }] = createResource(selectedDate, fetchEntryForDate);
+  const [entry] = createResource(selectedDate, fetchEntryForDate);
 
   return (
     <div class="flex h-full min-h-0 w-full flex-col gap-4">
@@ -46,7 +41,6 @@ export default function Diary() {
           date={selectedDate()}
           entryId={entry()?.id}
           initialContent={entry()?.note}
-          onDeleted={refetch}
         />
       </Show>
     </div>
@@ -78,11 +72,6 @@ const TOOLBAR_GROUPS = [
     { key: "italic", label: "Italic", icon: Italic },
     { key: "underline", label: "Underline", icon: UnderlineIcon },
     { key: "strike", label: "Strikethrough", icon: Strikethrough },
-    { key: "code", label: "Inline code", icon: CodeIcon },
-  ],
-  [
-    { key: "heading", label: "Heading", icon: Heading2 },
-    { key: "blockquote", label: "Quote", icon: Quote },
   ],
   [
     { key: "bulletList", label: "Bullet list", icon: List },
@@ -124,21 +113,6 @@ function getToolbarItems(editor) {
       isActive: editor.marks.strike.isActive(),
       canExec: editor.commands.toggleStrike.canExec(),
       command: () => editor.commands.toggleStrike(),
-    },
-    code: {
-      isActive: editor.marks.code.isActive(),
-      canExec: editor.commands.toggleCode.canExec(),
-      command: () => editor.commands.toggleCode(),
-    },
-    heading: {
-      isActive: editor.nodes.heading.isActive({ level: 2 }),
-      canExec: editor.commands.toggleHeading.canExec({ level: 2 }),
-      command: () => editor.commands.toggleHeading({ level: 2 }),
-    },
-    blockquote: {
-      isActive: editor.nodes.blockquote.isActive(),
-      canExec: editor.commands.toggleBlockquote.canExec(),
-      command: () => editor.commands.toggleBlockquote(),
     },
     bulletList: {
       isActive: editor.nodes.list.isActive({ kind: "bullet" }),
@@ -209,7 +183,6 @@ function DiaryForm(props) {
   // for a checkmark; reverted by the timeout scheduled in handleSave.
   const [justSaved, setJustSaved] = createSignal(false);
   const [error, setError] = createSignal("");
-  const [deleteOpen, setDeleteOpen] = createSignal(false);
   let savedTimeout;
   onCleanup(() => clearTimeout(savedTimeout));
 
@@ -250,15 +223,6 @@ function DiaryForm(props) {
     }
   };
 
-  // Deletes today's entry, then asks the parent to refetch. The refetch
-  // briefly flips Diary's Show back to its loading fallback, which
-  // unmounts and remounts this form -- the simplest way to get a fresh,
-  // empty ProseKit editor without reaching into its internals.
-  const handleDelete = async () => {
-    await pb.collection("diary_entries").delete(entryId());
-    props.onDeleted();
-  };
-
   return (
     // min-h-0 lets this shrink to the available height instead of
     // growing to fit content, so the editor pane below can flex-1 and
@@ -267,19 +231,6 @@ function DiaryForm(props) {
       onSubmit={handleSave}
       class="flex min-h-0 flex-1 w-full flex-col gap-4"
     >
-    
- <div class="flex items-center gap-3">
-        <Show when={entryId()}>
-          <button
-            type="button"
-            aria-label="Delete entry"
-            class="icon-btn"
-            onClick={() => setDeleteOpen(true)}
-          >
-            <Trash2 size={20} />
-          </button>
-        </Show>
-      </div>
       <ProseKit editor={editor}>
         {/* flex-1 min-h-0 makes this fill the remaining space in the
             form (header row + this), instead of growing with content.
@@ -313,17 +264,6 @@ function DiaryForm(props) {
         </div>
       </ProseKit>
       {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
-
-      <ConfirmDialog
-        open={deleteOpen()}
-        onOpenChange={setDeleteOpen}
-        title="Delete diary entry?"
-        description="This permanently deletes today's diary entry."
-        confirmLabel="Delete"
-        submittingLabel="Deleting…"
-        errorMessage="Failed to delete the diary entry."
-        onConfirm={handleDelete}
-      />
     </form>
   );
 }
