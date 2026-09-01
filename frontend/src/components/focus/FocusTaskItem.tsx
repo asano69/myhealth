@@ -1,7 +1,8 @@
 import { createSignal, Show } from "solid-js";
 import { TextField } from "@kobalte/core/text-field";
 import { ToggleButton } from "@kobalte/core/toggle-button";
-import Check from "lucide-solid/icons/check";
+import CircleCheckBig from "lucide-solid/icons/circle-check-big";
+import Circle from "lucide-solid/icons/circle";
 import Trash2 from "lucide-solid/icons/trash-2";
 import GripVertical from "lucide-solid/icons/grip-vertical";
 
@@ -81,7 +82,7 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
   return (
     <div
       ref={props.rowRef}
-      class="flex flex-col gap-1 rounded-md border border-border bg-card p-3 shadow-card transition-opacity"
+      class="flex flex-col gap-1 rounded-md border border-border bg-card p-1 shadow-card transition-opacity"
       classList={{ "opacity-40": props.dragging }}
     >
       <div class="flex items-center gap-3">
@@ -99,24 +100,29 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
         <button
           type="button"
           aria-label="Drag to reorder"
-          class="icon-btn -ml-2 shrink-0 cursor-grab touch-none active:cursor-grabbing"
+          class="icon-btn  shrink-0 cursor-grab touch-none active:cursor-grabbing"
           onPointerDown={props.onDragStart}
         >
-          <GripVertical size={18} />
+          <GripVertical size={15} />
         </button>
         {/* Kobalte ToggleButton instead of a native checkbox, so the
             done/not-done control matches the rest of the app's
             Kobalte-based inputs. */}
+        {/* CircleCheckBig turns green once done, so a completed task
+            is unmistakable at a glance instead of relying on the
+            strikethrough title alone. Color follows Kobalte's
+            data-[pressed] state, matching the [#dc3545] error-red
+            convention used elsewhere in this file. */}
         <ToggleButton
           pressed={props.task.done}
           onChange={toggleDone}
           aria-label={
             props.task.done ? "Mark task as not done" : "Mark task as done"
           }
-          class="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border border-border text-text transition-colors data-[pressed]:border-text data-[pressed]:bg-active-bg"
+          class="flex shrink-0 items-center justify-center text-border transition-colors data-[pressed]:text-[#28a745]"
         >
-          <Show when={props.task.done}>
-            <Check size={14} />
+          <Show when={props.task.done} fallback={<Circle size={20} />}>
+            <CircleCheckBig size={20} />
           </Show>
         </ToggleButton>
 
@@ -150,7 +156,7 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
                   cancelEdit();
                 }
               }}
-              class="w-full rounded-md border border-transparent bg-transparent px-0 py-2 text-text"
+              class="w-full rounded-md border border-transparent bg-transparent py-2 text-text"
             />
           </TextField>
         </Show>
