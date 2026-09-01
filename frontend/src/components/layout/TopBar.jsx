@@ -1,28 +1,14 @@
-import { createSignal, Show } from "solid-js";
-import { useNavigate } from "@solidjs/router";
+import { Show } from "solid-js";
 import Menu from "lucide-solid/icons/menu";
 import X from "lucide-solid/icons/x";
-import Plus from "lucide-solid/icons/plus";
 import Logo from "../Logo";
 import ThemeToggle from "./ThemeToggle";
 import UserMenu from "./UserMenu";
-import PromptDialog from "../dialogs/PromptDialog";
-import { createContext } from "../../lib/contexts";
 
 // The hamburger button here only toggles the Sidebar (owned by
 // MainLayout, passed in as sidebarOpen/onToggleSidebar). There is no
 // separate mobile-only menu anymore.
 export default function TopBar(props) {
-  const navigate = useNavigate();
-  const [createOpen, setCreateOpen] = createSignal(false);
-
-  // Creates a new context, then navigates straight to its (still empty)
-  // notes list, matching what renaming a context already does.
-  const handleCreate = async (name) => {
-    const record = await createContext(name);
-    navigate(`/contexts/${encodeURIComponent(record.context)}`);
-  };
-
   return (
     <header class="sticky top-0 z-40 p-2  border-b border-border bg-nav">
       <div class="flex justify-between px-2 md:px-8">
@@ -46,28 +32,10 @@ export default function TopBar(props) {
         </div>
 
         <nav class="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            aria-label="New context"
-            class="icon-btn"
-          >
-            <Plus size={24} />
-          </button>
           <ThemeToggle />
           <UserMenu />
         </nav>
       </div>
-
-      <PromptDialog
-        open={createOpen()}
-        onOpenChange={setCreateOpen}
-        title="New context"
-        label=""
-        initialValue=""
-        errorMessage="Failed to create the context."
-        onSubmit={handleCreate}
-      />
     </header>
   );
 }

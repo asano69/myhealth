@@ -33,3 +33,12 @@ export function shiftDate(date, days) {
   parsed.setUTCDate(parsed.getUTCDate() + days);
   return parsed.toISOString().slice(0, 10);
 }
+
+// Today's date as "YYYY-MM-DD", the storage format used throughout the
+// app (see formatDisplayDate above for the human-readable form).
+export function todayDate() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
+}

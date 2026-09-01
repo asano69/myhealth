@@ -1,8 +1,4 @@
 import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
-import { useParams, useNavigate, A } from "@solidjs/router";
-import { contextByName, contexts, contextsLoaded } from "../../lib/contexts";
-import ArrowLeft from "lucide-solid/icons/arrow-left";
-import ArrowRightLeft from "lucide-solid/icons/arrow-right-left";
 import Trash2 from "lucide-solid/icons/trash-2";
 import Save from "lucide-solid/icons/save";
 import Check from "lucide-solid/icons/check";
@@ -24,68 +20,38 @@ import { createEditor } from "prosekit/core";
 import { ProseKit, useEditorDerivedValue } from "prosekit/solid";
 
 import pb from "../../lib/pb";
-// NOTE: `Button` from "@kobalte/core/button" import removed below since
-// the save action is now a plain <button class="icon-btn"> in the
-// header row instead of a full-width kobalte Button.
-import { formatDisplayDate } from "../../lib/date";
-import { notePath } from "../../lib/notePath";
+import { formatDisplayDate, todayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
-import ActionsMenu from "../../components/menus/ActionsMenu";
-import ComboboxDialog from "../../components/dialogs/ComboboxDialog";
 import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
 
-// A note is looked up by its context and date rather than by id (see
-// lib/router.jsx), so this page resolves both from the URL before
-// rendering the form: first the context record (by name), then any
-// existing note for that context/date pair.
-export default function Editor() {
-  const params = useParams();
-  const date = () =>
-    `${params.year}-${params.month.padStart(2, "0")}-${params.day.padStart(2, "0")}`;
-
-  // Derived from the shared contexts store (see lib/contexts.js)
-  // instead of a separate fetch, so it stays in sync with
-  // create/rename/delete done anywhere else in the app.
-  const context = () => contextByName(params.contextName);
-  const [note] = createResource(
-    () => (context() ? [context().id, date()] : undefined),
-    fetchNote,
-  );
+// Diary is a single rich-text entry per day, keyed by date only. The
+// editor UI below (toolbar + ProseKit setup) is moved from the former
+// routes/contexts/Editor.jsx: that per-context notes feature is gone,
+// but the editor itself is exactly what a daily diary entry needs.
+export default function Diary() {
+  const [entry, { refetch }] = createResource(fetchTodayEntry);
 
   return (
-    <Show when={contextsLoaded()} fallback={<Loading />}>
-      <Show
-        when={context()}
-        fallback={
-          <p class="text-sm text-[#dc3545]">
-            Unknown context: {params.contextName}
-          </p>
-        }
-      >
-        <Show when={!note.loading} fallback={<Loading />}>
-          <NoteForm
-            contextId={context().id}
-            contextName={context().context}
-            date={date()}
-            noteId={note()?.id}
-            initialContent={note()?.note}
-          />
-        </Show>
+    <div class="flex h-full min-h-0 w-full flex-col gap-4">
+      <h1 class="font-sans text-4xl">Diary</h1>
+      <Show when={!entry.loading} fallback={<Loading />}>
+        <DiaryForm
+          entryId={entry()?.id}
+          initialContent={entry()?.note}
+          onDeleted={refetch}
+        />
       </Show>
-    </Show>
+    </div>
   );
 }
 
-async function fetchNote([contextId, date]) {
+async function fetchTodayEntry() {
   try {
-    return await pb.collection("notes").getFirstListItem(
-      pb.filter("context = {:contextId} && date = {:date}", {
-        contextId,
-        date,
-      }),
-    );
+    return await pb
+      .collection("diary_entries")
+      .getFirstListItem(pb.filter("date = {:date}", { date: todayDate() }));
   } catch {
-    // No note for this context/date yet; Editor starts a blank one.
+    // No entry for today yet; the form starts blank.
     return null;
   }
 }
@@ -220,29 +186,22 @@ function Toolbar() {
   );
 }
 
-// Split out from Editor so a fresh ProseKit editor is created every time
-// the form is (re)inserted, e.g. once an existing note's data has
-// finished loading.
-function NoteForm(props) {
-  const navigate = useNavigate();
-
-  // Tracks the note's id locally: unset until the first save, at which
-  // point it switches from create to update for any further save on
-  // this same context/date without needing a page reload.
-  const [noteId, setNoteId] = createSignal(props.noteId);
+// Split out from Diary so a fresh ProseKit editor is created every time
+// the form is (re)inserted, e.g. once today's entry has finished
+// loading, or right after a delete triggers a refetch (see onDeleted).
+function DiaryForm(props) {
+  // Tracks the entry's id locally: unset until the first save, at
+  // which point it switches from create to update for any further
+  // save today without needing a page reload.
+  const [entryId, setEntryId] = createSignal(props.entryId);
   const [saving, setSaving] = createSignal(false);
   // Briefly true right after a successful save, to swap the save icon
   // for a checkmark; reverted by the timeout scheduled in handleSave.
   const [justSaved, setJustSaved] = createSignal(false);
   const [error, setError] = createSignal("");
-  const [moveOpen, setMoveOpen] = createSignal(false);
   const [deleteOpen, setDeleteOpen] = createSignal(false);
   let savedTimeout;
   onCleanup(() => clearTimeout(savedTimeout));
-
-  // Every context except the one this note is currently in, i.e. the
-  // valid destinations for "Move context".
-  const moveTargets = () => contexts().filter((c) => c.id !== props.contextId);
 
   const editor = createEditor({
     extension: defineBasicExtension(),
@@ -262,16 +221,12 @@ function NoteForm(props) {
     setError("");
     setSaving(true);
     try {
-      const data = {
-        note: editor.getDocJSON(),
-        context: props.contextId,
-        date: props.date,
-      };
-      if (noteId()) {
-        await pb.collection("notes").update(noteId(), data);
+      const data = { note: editor.getDocJSON(), date: todayDate() };
+      if (entryId()) {
+        await pb.collection("diary_entries").update(entryId(), data);
       } else {
-        const record = await pb.collection("notes").create(data);
-        setNoteId(record.id);
+        const record = await pb.collection("diary_entries").create(data);
+        setEntryId(record.id);
       }
       // Show a checkmark in place of the save icon for a moment to
       // confirm the save succeeded, then revert back to the save icon.
@@ -279,60 +234,40 @@ function NoteForm(props) {
       clearTimeout(savedTimeout);
       savedTimeout = setTimeout(() => setJustSaved(false), 1500);
     } catch {
-      setError("Failed to save the note.");
+      setError("Failed to save today's diary entry.");
     } finally {
       setSaving(false);
     }
   };
 
-  // Re-points this note at a different context, then follows it to the
-  // note's new URL (same date, new context name).
-  const handleMoveContext = async (target) => {
-    await pb.collection("notes").update(noteId(), { context: target.id });
-    navigate(notePath(target.context, props.date));
-  };
-
-  const handleDeleteNote = async () => {
-    await pb.collection("notes").delete(noteId());
-    navigate(`/contexts/${encodeURIComponent(props.contextName)}`);
+  // Deletes today's entry, then asks the parent to refetch. The refetch
+  // briefly flips Diary's Show back to its loading fallback, which
+  // unmounts and remounts this form -- the simplest way to get a fresh,
+  // empty ProseKit editor without reaching into its internals.
+  const handleDelete = async () => {
+    await pb.collection("diary_entries").delete(entryId());
+    props.onDeleted();
   };
 
   return (
-    // min-h-0 lets this shrink to MainLayout's available height instead
-    // of growing to fit content, so the editor pane below can flex-1
-    // and scroll internally rather than the whole page scrolling.
+    // min-h-0 lets this shrink to the available height instead of
+    // growing to fit content, so the editor pane below can flex-1 and
+    // scroll internally rather than the whole page scrolling.
     <form
       onSubmit={handleSave}
-      class="flex h-full min-h-0 w-full flex-col gap-4"
+      class="flex min-h-0 flex-1 w-full flex-col gap-4"
     >
       <div class="flex items-center gap-3">
-        {/* Back to this context's notes list. */}
-        <A
-          href={`/contexts/${encodeURIComponent(props.contextName)}`}
-          aria-label="Back to notes list"
-          class="icon-btn"
-        >
-          <ArrowLeft size={24} />
-        </A>
-        <h1 class="font-mono text-3xl">{formatDisplayDate(props.date)}</h1>
-        {/* Move/delete only make sense for a note that already exists. */}
-        <Show when={noteId()}>
-          <ActionsMenu
-            label="Note actions"
-            items={[
-              {
-                label: "Move context",
-                icon: ArrowRightLeft,
-                onSelect: () => setMoveOpen(true),
-              },
-              {
-                label: "Delete",
-                icon: Trash2,
-                onSelect: () => setDeleteOpen(true),
-                destructive: true,
-              },
-            ]}
-          />
+        <span class="font-mono text-lg">{formatDisplayDate(todayDate())}</span>
+        <Show when={entryId()}>
+          <button
+            type="button"
+            aria-label="Delete entry"
+            class="icon-btn"
+            onClick={() => setDeleteOpen(true)}
+          >
+            <Trash2 size={20} />
+          </button>
         </Show>
         {/* Pushes the save button to the far right of this row. */}
         <div class="ml-auto flex items-center gap-1">
@@ -366,30 +301,16 @@ function NoteForm(props) {
         </div>
       </ProseKit>
       {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
-      <Show when={noteId()}>
-        <ComboboxDialog
-          open={moveOpen()}
-          onOpenChange={setMoveOpen}
-          title="Move context"
-          label=""
-          options={moveTargets()}
-          optionValue="id"
-          optionLabel="context"
-          placeholder="Search contexts…"
-          errorMessage="Failed to move the note."
-          onSubmit={handleMoveContext}
-        />
-        <ConfirmDialog
-          open={deleteOpen()}
-          onOpenChange={setDeleteOpen}
-          title="Delete note?"
-          description="This permanently deletes this note."
-          confirmLabel="Delete"
-          submittingLabel="Deleting…"
-          errorMessage="Failed to delete the note."
-          onConfirm={handleDeleteNote}
-        />
-      </Show>
+      <ConfirmDialog
+        open={deleteOpen()}
+        onOpenChange={setDeleteOpen}
+        title="Delete diary entry?"
+        description="This permanently deletes today's diary entry."
+        confirmLabel="Delete"
+        submittingLabel="Deleting…"
+        errorMessage="Failed to delete the diary entry."
+        onConfirm={handleDelete}
+      />
     </form>
   );
 }

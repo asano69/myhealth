@@ -1,11 +1,9 @@
-import { Router, Route } from "@solidjs/router";
+import { Router, Route, Navigate } from "@solidjs/router";
 
 import AppShell from "../components/layout/AppShell";
-import Home from "../routes/Home";
 import Sleep from "../routes/sleep";
 import Focus from "../routes/focus";
-import NoteEditor from "../routes/contexts/Editor";
-import ContextNotes from "../routes/contexts/Notes";
+import Diary from "../routes/diary";
 
 // All top-level routes in one place, so adding or removing a page never
 // requires touching main.jsx.
@@ -16,20 +14,12 @@ import ContextNotes from "../routes/contexts/Notes";
 export default function AppRouter() {
   return (
     <Router root={AppShell}>
-      {/* Placeholder until a proper home/context-picker page exists. */}
-      <Route path="/" component={Home} />
-      {/* A note is addressed by its context and date, not by id: this
-          keeps the URL self-descriptive and matches the "one note per
-          context per day" rule enforced by the notes collection's
-          unique index on (context, date). "contexts" (plural), matching
-          the "/contexts/:contextName" list route below. */}
+      {/* Diary is the app's primary page, so "/" redirects straight to
+          it instead of rendering a separate placeholder home page. */}
+      <Route path="/" component={() => <Navigate href="/diary" />} />
       <Route path="/sleep" component={Sleep} />
       <Route path="/focus" component={Focus} />
-      <Route
-        path="/contexts/:contextName/:year/:month/:day"
-        component={NoteEditor}
-      />
-      <Route path="/contexts/:contextName" component={ContextNotes} />
+      <Route path="/diary" component={Diary} />
     </Router>
   );
 }

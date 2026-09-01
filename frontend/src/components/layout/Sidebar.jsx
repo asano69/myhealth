@@ -1,11 +1,9 @@
-import { onMount, For, Show } from "solid-js";
+import { For, Show } from "solid-js";
 import { A } from "@solidjs/router";
 
 import BedSingle from "lucide-solid/icons/bed-single";
 import Focus from "lucide-solid/icons/cone";
 import Notebook from "lucide-solid/icons/notebook";
-
-import { loadContexts } from "../../lib/contexts";
 
 // Static top-level nav items, in the order they're shown. Kept as plain
 // data so each entry is just a {href, label, icon} tuple instead of
@@ -13,18 +11,10 @@ import { loadContexts } from "../../lib/contexts";
 const NAV_ITEMS = [
   { href: "/sleep", label: "Sleep", icon: BedSingle },
   { href: "/focus", label: "Focus", icon: Focus },
-    { href: "/diary", label: "Diary", icon: Notebook },
+  { href: "/diary", label: "Diary", icon: Notebook },
 ];
 
 export default function Sidebar(props) {
-  // Populates the shared contexts store (lib/contexts.js) once on
-  // mount. Sidebar no longer renders the contexts list itself, but this
-  // remains the app's single fetch trigger -- Editor/Notes pages rely
-  // on the store already being loaded (see contextsLoaded()).
-  onMount(() => {
-    loadContexts();
-  });
-
   return (
     <>
       {/* Overlay only exists on mobile, where the sidebar floats above
