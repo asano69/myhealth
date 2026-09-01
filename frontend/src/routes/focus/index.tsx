@@ -166,7 +166,7 @@ export default function Focus() {
       <DateNav date={selectedDate()} onChange={handleDateChange} />
       <h1 class="mb-4 font-sans text-4xl">Focus</h1>
 
-      <div class="flex flex-col [&>*]:border-b [&>*]:border-border [&>*:last-child]:border-b-0">
+      <div class="flex flex-col gap-2">
         <For each={tasks()}>
           {(task) => (
             <FocusTaskItem

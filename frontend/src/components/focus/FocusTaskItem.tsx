@@ -81,7 +81,7 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
   return (
     <div
       ref={props.rowRef}
-      class="flex flex-col gap-1 py-3 transition-opacity"
+      class="flex flex-col gap-1 rounded-md border border-border bg-card p-3 shadow-card transition-opacity"
       classList={{ "opacity-40": props.dragging }}
     >
       <div class="flex items-center gap-3">
