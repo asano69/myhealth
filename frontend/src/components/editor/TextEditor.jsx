@@ -6,9 +6,11 @@ import { createEditor } from "prosekit/core";
 import { ProseKit } from "prosekit/solid";
 
 import EditorToolbar from "./EditorToolbar";
+import SaveButton from "./SaveButton";
 
-// Reusable rich-text editor: a ProseKit editor with a toolbar (save,
-// undo/redo, bold/italic/underline/strike) and an editable content area.
+// Reusable rich-text editor: a ProseKit editor with a formatting toolbar
+// (undo/redo, bold/italic/underline/strike), an editable content area,
+// and a save button below the content.
 // Owns editor creation and mounting; the caller gets the raw ProseKit
 // `editor` instance via onReady so it can read the content (e.g.
 // editor.getDocJSON()) and wire up its own save logic -- this component
@@ -35,16 +37,20 @@ export default function TextEditor(props) {
 
   return (
     <ProseKit editor={editor}>
-      {/* flex-1 min-h-0 makes this fill the remaining space in the
-          caller's layout instead of growing with content. Toolbar keeps
-          its natural height; the content div takes the rest and scrolls
-          on its own. */}
-      <div class="notes-editor flex min-h-0 flex-1 flex-col">
-        <EditorToolbar saving={props.saving} justSaved={props.justSaved} />
-        <div
-          ref={mountEditor}
-          class="ProseMirror notes-editor-content min-h-0 flex-1 overflow-y-auto"
-        />
+      {/* Outer flex-1 min-h-0 wrapper bounds the bordered editor box
+          and the save button below it to the caller's available
+          height, so nothing overflows past the bottom of the screen.
+          The editor box itself keeps its border/background (notes-editor);
+          the save button sits outside it as a separate element. */}
+      <div class="flex min-h-0 flex-1 flex-col gap-2">
+        <div class="notes-editor flex min-h-0 flex-1 flex-col">
+          <EditorToolbar />
+          <div
+            ref={mountEditor}
+            class="ProseMirror notes-editor-content min-h-0 flex-1 overflow-y-auto"
+          />
+        </div>
+        <SaveButton saving={props.saving} justSaved={props.justSaved} />
       </div>
     </ProseKit>
   );

@@ -1,6 +1,4 @@
 import { For, Show } from "solid-js";
-import Save from "lucide-solid/icons/save";
-import Check from "lucide-solid/icons/check";
 import Undo2 from "lucide-solid/icons/undo-2";
 import Redo2 from "lucide-solid/icons/redo-2";
 import Bold from "lucide-solid/icons/bold";
@@ -74,31 +72,12 @@ function getToolbarItems(editor) {
 }
 
 // Must render inside <ProseKit editor={...}>, since useEditorDerivedValue
-// reads the current editor from that context. saving/justSaved are
-// passed down from whichever <form> owns the save button, so the save
-// button can live in the toolbar (to the left of undo/redo) instead of
-// a separate footer.
-export default function EditorToolbar(props) {
+// reads the current editor from that context.
+export default function EditorToolbar() {
   const items = useEditorDerivedValue(getToolbarItems);
 
   return (
     <div class="notes-toolbar">
-      <div class="notes-toolbar-group">
-        {/* Submits the enclosing <form> (see TextEditor.jsx). Swaps to
-            a checkmark for a moment after a successful save (see
-            justSaved, driven by the parent form), then reverts to the
-            save icon. */}
-        <button
-          type="submit"
-          aria-label={props.saving ? "Saving…" : "Save"}
-          disabled={props.saving}
-        >
-          <Show when={props.justSaved} fallback={<Save size={17} />}>
-            <Check size={17} />
-          </Show>
-        </button>
-      </div>
-      <div class="notes-toolbar-divider" />
       <For each={TOOLBAR_GROUPS}>
         {(group, groupIndex) => (
           <>

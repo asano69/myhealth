@@ -54,19 +54,6 @@
     @apply p-3 pb-10 text-text outline-none;
   }
 
-  /* Mirrors notes-toolbar (border-b/rounded-t) but on the opposite
-     edge, so the save button below the content reads as a footer bar
-     symmetric with the toolbar above it. */
-  .notes-footer {
-    @apply flex items-center justify-end gap-0.5 rounded-b-md border-t border-border bg-surface p-1.5;
-  }
-
-  .notes-footer button {
-    @apply flex h-9 w-9 cursor-pointer items-center justify-center rounded-sm
-         text-text transition-colors hover:bg-hover-bg
-         disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent;
-  }
-
   /* prosekit/basic/typography.css is tuned for a tight, block-based
    * editing UI (e.g. paragraphs get 1px of margin), not for comfortable
    * reading/writing. These selectors repeat both classes already present
