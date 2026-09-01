@@ -1137,15 +1137,18 @@ func init() {
 						"type": "json"
 					},
 					{
+						"cascadeDelete": false,
+						"collectionId": "pbc_2329339165",
 						"help": "",
 						"hidden": false,
-						"id": "json1874629670",
-						"maxSize": 0,
+						"id": "relation1874629670",
+						"maxSelect": 10,
+						"minSelect": 0,
 						"name": "tags",
 						"presentable": false,
 						"required": false,
 						"system": false,
-						"type": "json"
+						"type": "relation"
 					},
 					{
 						"hidden": false,
@@ -1174,6 +1177,70 @@ func init() {
 				],
 				"listRule": null,
 				"name": "diary_entries",
+				"system": false,
+				"type": "base",
+				"updateRule": null,
+				"viewRule": null
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "[a-z0-9]{15}",
+						"help": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 15,
+						"min": 15,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"help": "",
+						"hidden": false,
+						"id": "text245846248",
+						"max": 0,
+						"min": 0,
+						"name": "label",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": true,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"hidden": false,
+						"id": "autodate2990389176",
+						"name": "created",
+						"onCreate": true,
+						"onUpdate": false,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					},
+					{
+						"hidden": false,
+						"id": "autodate3332085495",
+						"name": "updated",
+						"onCreate": true,
+						"onUpdate": true,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					}
+				],
+				"id": "pbc_2329339165",
+				"indexes": [],
+				"listRule": null,
+				"name": "diary_tags",
 				"system": false,
 				"type": "base",
 				"updateRule": null,
