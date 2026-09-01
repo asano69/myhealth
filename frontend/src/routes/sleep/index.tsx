@@ -1,6 +1,8 @@
 import { createSignal, onMount } from "solid-js";
 
 import pb from "../../lib/pb";
+import { todayDate } from "../../lib/date";
+import DateNav from "../../components/common/DateNav";
 import SleepLogForm from "../../components/sleep/SleepLogForm";
 import type { SleepLogRecord } from "../../components/sleep/SleepLogForm";
 import SleepChart from "../../components/sleep/SleepChart";
@@ -13,6 +15,10 @@ const RECENT_LOG_COUNT = 30;
 // rather than patching the list locally, to keep this page simple.
 export default function Sleep() {
   const [logs, setLogs] = createSignal<SleepLogRecord[]>([]);
+  // The day currently being logged/edited via the form below,
+  // navigated via DateNav. Independent of `logs`, which always shows
+  // the most recent entries regardless of this selection.
+  const [selectedDate, setSelectedDate] = createSignal(todayDate());
 
   const loadRecent = async () => {
     try {
@@ -30,7 +36,8 @@ export default function Sleep() {
   return (
     <div class="flex w-full flex-col gap-6 xl:mx-auto xl:max-w-3xl">
       <h1 class="mb-4 font-sans text-4xl">Sleep</h1>
-      <SleepLogForm onSaved={loadRecent} />
+      <DateNav date={selectedDate()} onChange={setSelectedDate} />
+      <SleepLogForm date={selectedDate()} onSaved={loadRecent} />
       <SleepChart logs={logs()} />
       <SleepLogTable logs={logs()} />
     </div>

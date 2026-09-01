@@ -1,22 +1,13 @@
 import { createSignal, onMount, onCleanup, For, Show } from "solid-js";
-import ChevronLeft from "lucide-solid/icons/chevrons-left";
-import ChevronRight from "lucide-solid/icons/chevrons-right";
 
 import pb from "../../lib/pb";
+import DateNav from "../../components/common/DateNav";
 import FocusTaskItem from "../../components/focus/FocusTaskItem";
 import FocusTaskForm from "../../components/focus/FocusTaskForm";
 import type { FocusTaskRecord } from "../../components/focus/FocusTaskForm";
-import { formatDisplayDate, shiftDate } from "../../lib/date";
+import { todayDate } from "../../lib/date";
 
 const MAX_TASKS = 3;
-
-// Today's date as "YYYY-MM-DD".
-function todayDate(): string {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${now.getFullYear()}-${month}-${day}`;
-}
 
 // Focus is a minimal daily todo list: up to MAX_TASKS items for today,
 // each with only a done/not-done state. No priorities, due dates, or
@@ -55,11 +46,11 @@ export default function Focus() {
 
   onMount(loadTasks);
 
-  // Moves the viewed day backward or forward and reloads that day's
-  // tasks. Signal updates apply synchronously, so loadTasks already
-  // sees the new selectedDate() when it reads it.
-  const changeDate = (days: number) => {
-    setSelectedDate((d) => shiftDate(d, days));
+  // Switches the viewed day and reloads that day's tasks. Signal
+  // updates apply synchronously, so loadTasks already sees the new
+  // selectedDate() when it reads it.
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
     loadTasks();
   };
 
@@ -169,29 +160,7 @@ export default function Focus() {
     <div class="flex w-full flex-col gap-4 xl:mx-auto xl:max-w-3xl">
       <h1 class="mb-4 font-sans text-4xl">Focus</h1>
 
-      {/* Date navigation: shows the viewed day, with chevrons to step
-          it back/forward one day at a time (see changeDate above). */}
-      <div class="mb-4 flex items-center justify-center gap-3">
-        <button
-          type="button"
-          aria-label="Previous day"
-          class="icon-btn"
-          onClick={() => changeDate(-1)}
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <span class="font-mono text-md">
-          {formatDisplayDate(selectedDate())}
-        </span>
-        <button
-          type="button"
-          aria-label="Next day"
-          class="icon-btn"
-          onClick={() => changeDate(1)}
-        >
-          <ChevronRight size={20} />
-        </button>
-      </div>
+      <DateNav date={selectedDate()} onChange={handleDateChange} />
 
       <div class="flex flex-col [&>*]:border-b [&>*]:border-border [&>*:last-child]:border-b-0">
         <For each={tasks()}>

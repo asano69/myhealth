@@ -1,4 +1,4 @@
-import { createSignal, onMount, For, Show } from "solid-js";
+import { createEffect, createSignal, For, Show } from "solid-js";
 import { RadioGroup } from "@kobalte/core/radio-group";
 import { TextField } from "@kobalte/core/text-field";
 
@@ -16,15 +16,8 @@ export interface SleepLogRecord {
 
 const SATISFACTION_VALUES = ["1", "2", "3", "4"];
 
-// Today's date as "YYYY-MM-DD", used as the form's default value.
-function todayDate(): string {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${now.getFullYear()}-${month}-${day}`;
-}
-
-// Current time as "HH:mm", used as the form's default value.
+// Current time as "HH:mm", used as the form's default value for a
+// date that has no log yet.
 function currentTime(): string {
   const now = new Date();
   const hours = String(now.getHours()).padStart(2, "0");
@@ -48,40 +41,43 @@ async function findLogByDate(date: string): Promise<SleepLogRecord | null> {
 }
 
 export interface SleepLogFormProps {
+  // Which date's log this form edits, driven by DateNav in the parent
+  // (see routes/sleep/index.tsx).
+  date: string;
   // Called after a log is successfully saved, so the parent (e.g. the
   // chart in index.tsx) can refresh its data.
   onSaved?: (record: SleepLogRecord) => void;
 }
 
-// Form for logging a single night's sleep. Saves directly to
+// Form for logging a single night's sleep, for whichever date is
+// currently selected via DateNav in the parent. Saves directly to
 // PocketBase's "sleep_logs" collection. Since "date" is unique, saving
 // a date that already has a log updates it instead of creating a
 // duplicate.
 export default function SleepLogForm(props: SleepLogFormProps) {
-  const [date, setDate] = createSignal(todayDate());
   const [time, setTime] = createSignal(currentTime());
   const [satisfaction, setSatisfaction] = createSignal("3");
   const [submitting, setSubmitting] = createSignal(false);
   const [error, setError] = createSignal("");
 
-  // Loads today's log into the form if one already exists, otherwise
-  // leaves today's date with the current time as fresh defaults. Used
-  // both on mount and after a save, so the form always reflects
-  // today's saved state rather than resetting to blank defaults.
-  const loadToday = async () => {
-    const existing = await findLogByDate(todayDate());
+  // Loads props.date's log into the form if one already exists,
+  // otherwise resets to fresh defaults. Re-runs whenever the selected
+  // date changes (DateNav in the parent), so the form always reflects
+  // whichever day is currently being viewed.
+  const loadForDate = async (date: string) => {
+    const existing = await findLogByDate(date);
     if (existing) {
-      setDate(existing.date);
       setTime(existing.time);
       setSatisfaction(String(existing.satisfaction));
     } else {
-      setDate(todayDate());
       setTime(currentTime());
       setSatisfaction("3");
     }
   };
 
-  onMount(loadToday);
+  createEffect(() => {
+    loadForDate(props.date);
+  });
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -89,24 +85,22 @@ export default function SleepLogForm(props: SleepLogFormProps) {
     setSubmitting(true);
     try {
       const data = {
-        date: date(),
+        date: props.date,
         time: time(),
         satisfaction: Number(satisfaction()),
       };
-      // A log for this date may already exist (preloaded above, or the
-      // date field was changed to a day that already has an entry) --
+      // A log for this date may already exist (preloaded above) --
       // update it instead of creating a duplicate.
-      const existing = await findLogByDate(date());
+      const existing = await findLogByDate(props.date);
       const record = existing
         ? await pb
             .collection("sleep_logs")
             .update<SleepLogRecord>(existing.id, data)
         : await pb.collection("sleep_logs").create<SleepLogRecord>(data);
       props.onSaved?.(record);
-      // Re-sync the form with today's just-saved data instead of
-      // resetting to blank defaults, so the form reflects what's
-      // actually stored.
-      await loadToday();
+      // Re-sync the form with the just-saved data instead of resetting
+      // to blank defaults, so the form reflects what's actually stored.
+      await loadForDate(props.date);
     } catch {
       setError("Failed to save the sleep log.");
     } finally {
@@ -116,15 +110,6 @@ export default function SleepLogForm(props: SleepLogFormProps) {
 
   return (
     <form onSubmit={handleSubmit} class="flex flex-col gap-4">
-      <TextField value={date()} onChange={setDate} class="flex flex-col gap-1">
-        <TextField.Label class="text-sm text-text">Date</TextField.Label>
-        <TextField.Input
-          type="date"
-          required
-          class="rounded-md border border-border bg-field px-3 py-2 text-text"
-        />
-      </TextField>
-
       <TextField value={time()} onChange={setTime} class="flex flex-col gap-1">
         <TextField.Label class="text-sm text-text">Time</TextField.Label>
         <TextField.Input

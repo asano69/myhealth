@@ -20,22 +20,30 @@ import { createEditor } from "prosekit/core";
 import { ProseKit, useEditorDerivedValue } from "prosekit/solid";
 
 import pb from "../../lib/pb";
-import { formatDisplayDate, todayDate } from "../../lib/date";
+import { todayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
 import ConfirmDialog from "../../components/dialogs/ConfirmDialog";
+import DateNav from "../../components/common/DateNav";
 
 // Diary is a single rich-text entry per day, keyed by date only. The
 // editor UI below (toolbar + ProseKit setup) is moved from the former
 // routes/contexts/Editor.jsx: that per-context notes feature is gone,
 // but the editor itself is exactly what a daily diary entry needs.
 export default function Diary() {
-  const [entry, { refetch }] = createResource(fetchTodayEntry);
+  // The day currently being viewed/edited, navigated via DateNav below.
+  const [selectedDate, setSelectedDate] = createSignal(todayDate());
+  // selectedDate as the resource's source: createResource automatically
+  // refetches whenever it changes, so navigating days is enough to load
+  // that day's entry without any extra wiring.
+  const [entry, { refetch }] = createResource(selectedDate, fetchEntryForDate);
 
   return (
     <div class="flex h-full min-h-0 w-full flex-col gap-4">
       <h1 class="font-sans text-4xl">Diary</h1>
+      <DateNav date={selectedDate()} onChange={setSelectedDate} />
       <Show when={!entry.loading} fallback={<Loading />}>
         <DiaryForm
+          date={selectedDate()}
           entryId={entry()?.id}
           initialContent={entry()?.note}
           onDeleted={refetch}
@@ -45,13 +53,13 @@ export default function Diary() {
   );
 }
 
-async function fetchTodayEntry() {
+async function fetchEntryForDate(date) {
   try {
     return await pb
       .collection("diary_entries")
-      .getFirstListItem(pb.filter("date = {:date}", { date: todayDate() }));
+      .getFirstListItem(pb.filter("date = {:date}", { date }));
   } catch {
-    // No entry for today yet; the form starts blank.
+    // No entry for this date yet; the form starts blank.
     return null;
   }
 }
@@ -187,8 +195,10 @@ function Toolbar() {
 }
 
 // Split out from Diary so a fresh ProseKit editor is created every time
-// the form is (re)inserted, e.g. once today's entry has finished
-// loading, or right after a delete triggers a refetch (see onDeleted).
+// the form is (re)inserted, e.g. once the selected day's entry has
+// finished loading, right after a delete triggers a refetch, or after
+// DateNav switches to a different day (see onDeleted, and Diary's
+// createResource above).
 function DiaryForm(props) {
   // Tracks the entry's id locally: unset until the first save, at
   // which point it switches from create to update for any further
@@ -221,7 +231,7 @@ function DiaryForm(props) {
     setError("");
     setSaving(true);
     try {
-      const data = { note: editor.getDocJSON(), date: todayDate() };
+      const data = { note: editor.getDocJSON(), date: props.date };
       if (entryId()) {
         await pb.collection("diary_entries").update(entryId(), data);
       } else {
@@ -258,7 +268,6 @@ function DiaryForm(props) {
       class="flex min-h-0 flex-1 w-full flex-col gap-4"
     >
       <div class="flex items-center gap-3">
-        <span class="font-mono text-lg">{formatDisplayDate(todayDate())}</span>
         <Show when={entryId()}>
           <button
             type="button"
