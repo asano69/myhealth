@@ -42,3 +42,10 @@ export function todayDate() {
   const day = String(now.getDate()).padStart(2, "0");
   return `${now.getFullYear()}-${month}-${day}`;
 }
+
+// Day of week for a "YYYY-MM-DD" date string: 0 = Sunday ... 6 =
+// Saturday. Parsed as UTC (see shiftDate/formatDisplayDate above) so it
+// stays consistent with the rest of this module.
+export function dayOfWeek(date) {
+  return new Date(`${date}T00:00:00Z`).getUTCDay();
+}

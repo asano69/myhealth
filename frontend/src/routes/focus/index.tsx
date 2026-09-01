@@ -4,6 +4,7 @@ import pb from "../../lib/pb";
 import DateNav from "../../components/common/DateNav";
 import FocusTaskItem from "../../components/focus/FocusTaskItem";
 import FocusTaskForm from "../../components/focus/FocusTaskForm";
+import FocusHeatmap from "../../components/focus/FocusHeatmap";
 import type { FocusTaskRecord } from "../../components/focus/FocusTaskForm";
 import { todayDate } from "../../lib/date";
 
@@ -184,6 +185,8 @@ export default function Focus() {
           onAdded={handleAdded}
         />
       </Show>
+
+      <FocusHeatmap />
     </div>
   );
 }
