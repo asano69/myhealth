@@ -26,7 +26,7 @@ export default function DateNav(props: DateNavProps) {
       >
         <ChevronLeft size={20} />
       </button>
-      <span class="font-mono text-md">{formatDisplayDate(props.date)}</span>
+      <span class="font-mono text-xl">{formatDisplayDate(props.date)}</span>
       <button
         type="button"
         aria-label="Next day"
