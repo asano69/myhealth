@@ -7,6 +7,7 @@ import Bold from "lucide-solid/icons/bold";
 import Italic from "lucide-solid/icons/italic";
 import UnderlineIcon from "lucide-solid/icons/underline";
 import Strikethrough from "lucide-solid/icons/strikethrough";
+import List from "lucide-solid/icons/list";
 import { useEditorDerivedValue } from "prosekit/solid";
 
 // Toolbar buttons, grouped by function (history / marks), each backed by
@@ -24,6 +25,7 @@ const TOOLBAR_GROUPS = [
     { key: "underline", label: "Underline", icon: UnderlineIcon },
     { key: "strike", label: "Strikethrough", icon: Strikethrough },
   ],
+  [{ key: "bulletList", label: "Bullet List", icon: List }],
 ];
 
 // Derives { isActive, canExec, command } for every toolbar button from
@@ -60,6 +62,13 @@ function getToolbarItems(editor) {
       isActive: editor.marks.strike.isActive(),
       canExec: editor.commands.toggleStrike.canExec(),
       command: () => editor.commands.toggleStrike(),
+    },
+    // "list" node's `kind` attribute distinguishes bullet/ordered/task
+    // lists; toggleList wraps/unwraps the current block(s) accordingly.
+    bulletList: {
+      isActive: editor.nodes.list.isActive({ kind: "bullet" }),
+      canExec: editor.commands.toggleList.canExec({ kind: "bullet" }),
+      command: () => editor.commands.toggleList({ kind: "bullet" }),
     },
   };
 }

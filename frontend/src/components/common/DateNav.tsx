@@ -1,7 +1,12 @@
 import ChevronLeft from "lucide-solid/icons/chevrons-left";
 import ChevronRight from "lucide-solid/icons/chevrons-right";
 
-import { formatDisplayDate, shiftDate } from "../../lib/date";
+import {
+  dayOfWeek,
+  formatDisplayDate,
+  shiftDate,
+  WEEKDAY_ABBREVIATIONS,
+} from "../../lib/date";
 
 export interface DateNavProps {
   date: string; // "YYYY-MM-DD"
@@ -30,7 +35,10 @@ export default function DateNav(props: DateNavProps) {
       >
         <ChevronLeft size={20} />
       </button>
-      <span class="font-serif text-lg">{formatDisplayDate(props.date)}</span>
+      <span class="font-serif text-lg">
+        {WEEKDAY_ABBREVIATIONS[dayOfWeek(props.date)]},{" "}
+        {formatDisplayDate(props.date)}
+      </span>
       <button
         type="button"
         aria-label="Next day"

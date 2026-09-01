@@ -4,8 +4,30 @@
 // three letters, which reads inconsistently in a compact date like
 // "1 Sept 2026".
 export const MONTH_ABBREVIATIONS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+// 3-letter weekday abbreviations, indexed the same way as dayOfWeek()
+// below (0 = Sunday ... 6 = Saturday).
+export const WEEKDAY_ABBREVIATIONS = [
+  "Sun",
+  "Mon",
+  "Tue",
+  "Wed",
+  "Thu",
+  "Fri",
+  "Sat",
 ];
 
 // Converts a stored date string ("YYYY-MM-DD") into its display form

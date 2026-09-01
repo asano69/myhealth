@@ -135,7 +135,7 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
             separate edit button/dialog. */}
         <Show
           when={editing()}
-          fallback={ 
+          fallback={
             <span
               class="flex-1 cursor-text border border-transparent py-2"
               onClick={startEdit}
