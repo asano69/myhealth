@@ -31,10 +31,13 @@
   --color-nav: light-dark(#f6f7fa, #1a1b1e);
 
   /* Focus heatmap cell colors (see components/focus/FocusHeatmap.tsx).
-   * 0% is red; 33/50/66/100% form a blue gradient that gets darker
-   * (more saturated) as the rate rises. Dark mode uses brighter stops
-   * for the higher rates instead of literally darker ones, since a
+   * --color-heat-empty is the "no tasks created" background, matching
+   * GitHub's own neutral (not transparent) empty-cell color. 0% is
+   * red; 33/50/66/100% form a blue gradient that gets darker (more
+   * saturated) as the rate rises. Dark mode uses brighter stops for
+   * the higher rates instead of literally darker ones, since a
    * near-black blue would disappear against a dark background. */
+  --color-heat-empty: light-dark(#ebedf0, #161b22);
   --color-heat-0: light-dark(#fca5a5, #7f1d1d);
   --color-heat-33: light-dark(#bfdbfe, #1e3a8a);
   --color-heat-50: light-dark(#60a5fa, #1d4ed8);
