@@ -7,8 +7,6 @@ import Bold from "lucide-solid/icons/bold";
 import Italic from "lucide-solid/icons/italic";
 import UnderlineIcon from "lucide-solid/icons/underline";
 import Strikethrough from "lucide-solid/icons/strikethrough";
-import List from "lucide-solid/icons/list";
-import ListOrdered from "lucide-solid/icons/list-ordered";
 import "prosekit/basic/style.css";
 import "prosekit/basic/typography.css";
 import { defineBasicExtension } from "prosekit/basic";
@@ -73,10 +71,6 @@ const TOOLBAR_GROUPS = [
     { key: "underline", label: "Underline", icon: UnderlineIcon },
     { key: "strike", label: "Strikethrough", icon: Strikethrough },
   ],
-  [
-    { key: "bulletList", label: "Bullet list", icon: List },
-    { key: "orderedList", label: "Numbered list", icon: ListOrdered },
-  ],
 ];
 
 // Derives { isActive, canExec, command } for every toolbar button from
@@ -114,26 +108,34 @@ function getToolbarItems(editor) {
       canExec: editor.commands.toggleStrike.canExec(),
       command: () => editor.commands.toggleStrike(),
     },
-    bulletList: {
-      isActive: editor.nodes.list.isActive({ kind: "bullet" }),
-      canExec: editor.commands.toggleList.canExec({ kind: "bullet" }),
-      command: () => editor.commands.toggleList({ kind: "bullet" }),
-    },
-    orderedList: {
-      isActive: editor.nodes.list.isActive({ kind: "ordered" }),
-      canExec: editor.commands.toggleList.canExec({ kind: "ordered" }),
-      command: () => editor.commands.toggleList({ kind: "ordered" }),
-    },
   };
 }
 
 // Must render inside <ProseKit editor={...}>, since useEditorDerivedValue
-// reads the current editor from that context.
-function Toolbar() {
+// reads the current editor from that context. saving/justSaved are
+// passed down from DiaryForm so the save button can live in the toolbar
+// (to the left of undo/redo) instead of a separate footer.
+function Toolbar(props) {
   const items = useEditorDerivedValue(getToolbarItems);
 
   return (
     <div class="notes-toolbar">
+      <div class="notes-toolbar-group">
+        {/* Submits the form above (see onSubmit on <form> in DiaryForm).
+            Swaps to a checkmark for a moment after a successful save
+            (see justSaved/handleSave in DiaryForm), then reverts to the
+            save icon. */}
+        <button
+          type="submit"
+          aria-label={props.saving ? "Saving…" : "Save"}
+          disabled={props.saving}
+        >
+          <Show when={props.justSaved} fallback={<Save size={17} />}>
+            <Check size={17} />
+          </Show>
+        </button>
+      </div>
+      <div class="notes-toolbar-divider" />
       <For each={TOOLBAR_GROUPS}>
         {(group, groupIndex) => (
           <>
@@ -229,7 +231,7 @@ function DiaryForm(props) {
     // scroll internally rather than the whole page scrolling.
     <form
       onSubmit={handleSave}
-      class="flex min-h-0 flex-1 w-full flex-col gap-4"
+      class="flex min-h-0 flex-1 w-full flex-col gap-4 mb-4"
     >
       <ProseKit editor={editor}>
         {/* flex-1 min-h-0 makes this fill the remaining space in the
@@ -238,29 +240,11 @@ function DiaryForm(props) {
             height; the content div takes the rest and scrolls on its
             own. */}
         <div class="notes-editor flex min-h-0 flex-1 flex-col">
-          <Toolbar />
+          <Toolbar saving={saving()} justSaved={justSaved()} />
           <div
             ref={mountEditor}
             class="ProseMirror notes-editor-content min-h-0 flex-1 overflow-y-auto"
           />
-          {/* Mirrors Toolbar above the content: a save button styled
-              as part of the ProseKit chrome, symmetric with the
-              toolbar row at the top. */}
-          <div class="notes-footer">
-            {/* Submits the form above (see onSubmit on <form>). Swaps to a
-                checkmark for a moment after a successful save (see
-                justSaved/handleSave above), then reverts to the save
-                icon. */}
-            <button
-              type="submit"
-              aria-label={saving() ? "Saving…" : "Save"}
-              disabled={saving()}
-            >
-              <Show when={justSaved()} fallback={<Save size={17} />}>
-                <Check size={17} />
-              </Show>
-            </button>
-          </div>
         </div>
       </ProseKit>
       {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
