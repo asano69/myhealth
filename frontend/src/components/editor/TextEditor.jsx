@@ -6,7 +6,7 @@ import { createEditor } from "prosekit/core";
 import { ProseKit } from "prosekit/solid";
 
 import EditorToolbar from "./EditorToolbar";
-import SaveButton from "./SaveButton";
+import EditorSaveButton from "./EditorSaveButton";
 
 // Reusable rich-text editor: a ProseKit editor with a formatting toolbar
 // (undo/redo, bold/italic/underline/strike), an editable content area,
@@ -50,7 +50,7 @@ export default function TextEditor(props) {
             class="ProseMirror notes-editor-content min-h-0 flex-1 overflow-y-auto"
           />
         </div>
-        <SaveButton saving={props.saving} justSaved={props.justSaved} />
+        <EditorSaveButton saving={props.saving} justSaved={props.justSaved} />
       </div>
     </ProseKit>
   );

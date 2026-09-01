@@ -3,6 +3,7 @@ import { RadioGroup } from "@kobalte/core/radio-group";
 import { TextField } from "@kobalte/core/text-field";
 
 import pb from "../../lib/pb";
+import SaveButton from "../common/SaveButton";
 
 // Matches the PocketBase "sleep_logs" collection schema.
 export interface SleepLogRecord {
@@ -146,9 +147,7 @@ export default function SleepLogForm(props: SleepLogFormProps) {
         <p class="text-sm text-[#dc3545]">{error()}</p>
       </Show>
 
-      <button type="submit" class="btn" disabled={submitting()}>
-        {submitting() ? "Saving…" : "Save"}
-      </button>
+      <SaveButton saving={submitting()} justSaved={false} />
     </form>
   );
 }
