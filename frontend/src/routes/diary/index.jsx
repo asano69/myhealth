@@ -267,7 +267,8 @@ function DiaryForm(props) {
       onSubmit={handleSave}
       class="flex min-h-0 flex-1 w-full flex-col gap-4"
     >
-      <div class="flex items-center gap-3">
+    
+ <div class="flex items-center gap-3">
         <Show when={entryId()}>
           <button
             type="button"
@@ -278,38 +279,41 @@ function DiaryForm(props) {
             <Trash2 size={20} />
           </button>
         </Show>
-        {/* Pushes the save button to the far right of this row. */}
-        <div class="ml-auto flex items-center gap-1">
-          {/* Submits the form below (see onSubmit on <form>). Swaps to a
-              checkmark for a moment after a successful save (see
-              justSaved/handleSave above), then reverts to the save
-              icon. */}
-          <button
-            type="submit"
-            aria-label={saving() ? "Saving…" : "Save"}
-            class="icon-btn"
-            disabled={saving()}
-          >
-            <Show when={justSaved()} fallback={<Save size={24} />}>
-              <Check size={24} />
-            </Show>
-          </button>
-        </div>
       </div>
       <ProseKit editor={editor}>
         {/* flex-1 min-h-0 makes this fill the remaining space in the
-            form (header row + error + this), instead of growing with
-            content. Toolbar keeps its natural height; the content div
-            below takes the rest and scrolls on its own. */}
+            form (header row + this), instead of growing with content.
+            Toolbar and the footer below both keep their natural
+            height; the content div takes the rest and scrolls on its
+            own. */}
         <div class="notes-editor flex min-h-0 flex-1 flex-col">
           <Toolbar />
           <div
             ref={mountEditor}
             class="ProseMirror notes-editor-content min-h-0 flex-1 overflow-y-auto"
           />
+          {/* Mirrors Toolbar above the content: a save button styled
+              as part of the ProseKit chrome, symmetric with the
+              toolbar row at the top. */}
+          <div class="notes-footer">
+            {/* Submits the form above (see onSubmit on <form>). Swaps to a
+                checkmark for a moment after a successful save (see
+                justSaved/handleSave above), then reverts to the save
+                icon. */}
+            <button
+              type="submit"
+              aria-label={saving() ? "Saving…" : "Save"}
+              disabled={saving()}
+            >
+              <Show when={justSaved()} fallback={<Save size={24} />}>
+                <Check size={24} />
+              </Show>
+            </button>
+          </div>
         </div>
       </ProseKit>
       {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
+
       <ConfirmDialog
         open={deleteOpen()}
         onOpenChange={setDeleteOpen}
