@@ -4,6 +4,7 @@ import pb from "../../lib/pb";
 import {
   dayOfWeek,
   formatDisplayDate,
+  MONTH_ABBREVIATIONS,
   shiftDate,
   todayDate,
 } from "../../lib/date";
@@ -17,8 +18,6 @@ const WEEKS_TO_SHOW = 52;
 // row is labeled (Mon/Wed/Fri) to avoid crowding a 10px-tall column.
 // Index matches dayOfWeek()'s 0=Sun..6=Sat.
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
-
-const monthFormatter = new Intl.DateTimeFormat("en-GB", { month: "short" });
 
 type RateCategory = "none" | "0" | "33" | "50" | "66" | "100" | "future";
 
@@ -142,11 +141,10 @@ export default function FocusHeatmap(props: FocusHeatmapProps) {
   const monthLabels = createMemo(() => {
     return weeks().map((week, i) => {
       const sunday = week[0].date;
-      if (i === 0) return monthFormatter.format(new Date(`${sunday}T00:00:00Z`));
-      const prevSunday = weeks()[i - 1][0].date;
-      return sunday.slice(0, 7) !== prevSunday.slice(0, 7)
-        ? monthFormatter.format(new Date(`${sunday}T00:00:00Z`))
-        : "";
+      const month = sunday.slice(5, 7);
+      if (i === 0) return MONTH_ABBREVIATIONS[Number(month) - 1];
+      const prevMonth = weeks()[i - 1][0].date.slice(5, 7);
+      return month !== prevMonth ? MONTH_ABBREVIATIONS[Number(month) - 1] : "";
     });
   });
 

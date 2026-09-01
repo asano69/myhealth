@@ -1,26 +1,22 @@
-// Single source of truth for the display style (currently "17 Jul 2026").
-// Change these options to change the format everywhere the app
-// shows a date, without touching any call site.
-const DATE_FORMAT_OPTIONS = {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-};
+// Fixed 3-letter abbreviations for display, instead of
+// Intl.DateTimeFormat's "short" month: the en-GB locale renders
+// September as "Sept" (four letters) while every other month is
+// three letters, which reads inconsistently in a compact date like
+// "1 Sept 2026".
+export const MONTH_ABBREVIATIONS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
 
-const displayFormatter = new Intl.DateTimeFormat("en-GB", DATE_FORMAT_OPTIONS);
-
-// Converts a stored date string ("YYYY-MM-DD") into its display form.
-// Storage keeps the hyphenated ISO form since it's what sorts and
-// filters correctly in PocketBase queries; only the rendered text
-// changes here.
-//
-// Parsed as UTC (appending "T00:00:00Z") so the date doesn't shift by a
-// day in timezones behind UTC, since "YYYY-MM-DD" alone is otherwise
-// interpreted as UTC midnight by Date but displayed in local time by
-// Intl.DateTimeFormat.
+// Converts a stored date string ("YYYY-MM-DD") into its display form
+// (currently "17 Jul 2026"). Storage keeps the hyphenated ISO form
+// since it's what sorts and filters correctly in PocketBase queries;
+// only the rendered text changes here. Built directly from the parts
+// instead of Date + Intl.DateTimeFormat, which also sidesteps the
+// "Sept" quirk above and any UTC/local timezone shift.
 export function formatDisplayDate(date) {
-  const parsed = new Date(`${date}T00:00:00Z`);
-  return displayFormatter.format(parsed);
+  const [year, month, day] = date.split("-").map(Number);
+  return `${day} ${MONTH_ABBREVIATIONS[month - 1]} ${year}`;
 }
 
 // Shifts a "YYYY-MM-DD" date string by the given number of days
