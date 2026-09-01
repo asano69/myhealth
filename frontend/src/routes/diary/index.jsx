@@ -256,8 +256,8 @@ function DiaryForm(props) {
               aria-label={saving() ? "Saving…" : "Save"}
               disabled={saving()}
             >
-              <Show when={justSaved()} fallback={<Save size={24} />}>
-                <Check size={24} />
+              <Show when={justSaved()} fallback={<Save size={17} />}>
+                <Check size={17} />
               </Show>
             </button>
           </div>
