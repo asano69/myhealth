@@ -1,27 +1,15 @@
-import { createSignal, onCleanup, Show, createResource, For } from "solid-js";
-import Save from "lucide-solid/icons/save";
-import Check from "lucide-solid/icons/check";
-import Undo2 from "lucide-solid/icons/undo-2";
-import Redo2 from "lucide-solid/icons/redo-2";
-import Bold from "lucide-solid/icons/bold";
-import Italic from "lucide-solid/icons/italic";
-import UnderlineIcon from "lucide-solid/icons/underline";
-import Strikethrough from "lucide-solid/icons/strikethrough";
-import "prosekit/basic/style.css";
-import "prosekit/basic/typography.css";
-import { defineBasicExtension } from "prosekit/basic";
-import { createEditor } from "prosekit/core";
-import { ProseKit, useEditorDerivedValue } from "prosekit/solid";
+import { createSignal, onCleanup, Show, createResource } from "solid-js";
 
 import pb from "../../lib/pb";
 import { todayDate } from "../../lib/date";
 import Loading from "../../components/Loading";
 import DateNav from "../../components/common/DateNav";
+import TextEditor from "../../components/editor/TextEditor";
 
 // Diary is a single rich-text entry per day, keyed by date only. The
-// editor UI below (toolbar + ProseKit setup) is moved from the former
-// routes/contexts/Editor.jsx: that per-context notes feature is gone,
-// but the editor itself is exactly what a daily diary entry needs.
+// actual editor UI (toolbar + ProseKit setup) lives in
+// components/editor/TextEditor.jsx; this page only owns the
+// date-selection and save-to-PocketBase logic.
 export default function Diary() {
   // The day currently being viewed/edited, navigated via DateNav below.
   const [selectedDate, setSelectedDate] = createSignal(todayDate());
@@ -56,124 +44,10 @@ async function fetchEntryForDate(date) {
   }
 }
 
-// Toolbar buttons, grouped by function (history / marks / block type /
-// lists) and each backed by a ProseKit command. Kept as plain data so
-// adding, removing, or reordering a formatting option is a one-line
-// change instead of touching the render logic below.
-const TOOLBAR_GROUPS = [
-  [
-    { key: "undo", label: "Undo", icon: Undo2 },
-    { key: "redo", label: "Redo", icon: Redo2 },
-  ],
-  [
-    { key: "bold", label: "Bold", icon: Bold },
-    { key: "italic", label: "Italic", icon: Italic },
-    { key: "underline", label: "Underline", icon: UnderlineIcon },
-    { key: "strike", label: "Strikethrough", icon: Strikethrough },
-  ],
-];
-
-// Derives { isActive, canExec, command } for every toolbar button from
-// the current editor state. Passed to useEditorDerivedValue, which
-// re-runs it on every ProseMirror transaction.
-function getToolbarItems(editor) {
-  return {
-    undo: {
-      isActive: false,
-      canExec: editor.commands.undo.canExec(),
-      command: () => editor.commands.undo(),
-    },
-    redo: {
-      isActive: false,
-      canExec: editor.commands.redo.canExec(),
-      command: () => editor.commands.redo(),
-    },
-    bold: {
-      isActive: editor.marks.bold.isActive(),
-      canExec: editor.commands.toggleBold.canExec(),
-      command: () => editor.commands.toggleBold(),
-    },
-    italic: {
-      isActive: editor.marks.italic.isActive(),
-      canExec: editor.commands.toggleItalic.canExec(),
-      command: () => editor.commands.toggleItalic(),
-    },
-    underline: {
-      isActive: editor.marks.underline.isActive(),
-      canExec: editor.commands.toggleUnderline.canExec(),
-      command: () => editor.commands.toggleUnderline(),
-    },
-    strike: {
-      isActive: editor.marks.strike.isActive(),
-      canExec: editor.commands.toggleStrike.canExec(),
-      command: () => editor.commands.toggleStrike(),
-    },
-  };
-}
-
-// Must render inside <ProseKit editor={...}>, since useEditorDerivedValue
-// reads the current editor from that context. saving/justSaved are
-// passed down from DiaryForm so the save button can live in the toolbar
-// (to the left of undo/redo) instead of a separate footer.
-function Toolbar(props) {
-  const items = useEditorDerivedValue(getToolbarItems);
-
-  return (
-    <div class="notes-toolbar">
-      <div class="notes-toolbar-group">
-        {/* Submits the form above (see onSubmit on <form> in DiaryForm).
-            Swaps to a checkmark for a moment after a successful save
-            (see justSaved/handleSave in DiaryForm), then reverts to the
-            save icon. */}
-        <button
-          type="submit"
-          aria-label={props.saving ? "Saving…" : "Save"}
-          disabled={props.saving}
-        >
-          <Show when={props.justSaved} fallback={<Save size={17} />}>
-            <Check size={17} />
-          </Show>
-        </button>
-      </div>
-      <div class="notes-toolbar-divider" />
-      <For each={TOOLBAR_GROUPS}>
-        {(group, groupIndex) => (
-          <>
-            {/* No divider before the first group. */}
-            <Show when={groupIndex() > 0}>
-              <div class="notes-toolbar-divider" />
-            </Show>
-            <div class="notes-toolbar-group">
-              <For each={group}>
-                {({ key, label, icon: Icon }) => (
-                  <Show when={items()[key]}>
-                    {(item) => (
-                      <button
-                        type="button"
-                        title={label}
-                        aria-label={label}
-                        disabled={!item().canExec}
-                        onClick={item().command}
-                        classList={{ "is-active": item().isActive }}
-                      >
-                        <Icon size={17} />
-                      </button>
-                    )}
-                  </Show>
-                )}
-              </For>
-            </div>
-          </>
-        )}
-      </For>
-    </div>
-  );
-}
-
-// Split out from Diary so a fresh ProseKit editor is created every time
-// the form is (re)inserted, e.g. once the selected day's entry has
-// finished loading, right after a delete triggers a refetch, or after
-// DateNav switches to a different day (see onDeleted, and Diary's
+// Split out from Diary so a fresh editor is created every time the form
+// is (re)inserted, e.g. once the selected day's entry has finished
+// loading, right after a delete triggers a refetch, or after DateNav
+// switches to a different day (see onDeleted, and Diary's
 // createResource above).
 function DiaryForm(props) {
   // Tracks the entry's id locally: unset until the first save, at
@@ -188,18 +62,9 @@ function DiaryForm(props) {
   let savedTimeout;
   onCleanup(() => clearTimeout(savedTimeout));
 
-  const editor = createEditor({
-    extension: defineBasicExtension(),
-    defaultContent: props.initialContent,
-  });
-
-  // Solid doesn't auto-unmount ref callbacks the way React's new
-  // ref-cleanup convention does, so the returned unmount function is
-  // wired to onCleanup explicitly here.
-  const mountEditor = (el) => {
-    const unmount = editor.mount(el);
-    onCleanup(() => unmount?.());
-  };
+  // Set by TextEditor's onReady once its ProseKit editor is created, so
+  // handleSave can read the current content via editor.getDocJSON().
+  let editor;
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -233,20 +98,12 @@ function DiaryForm(props) {
       onSubmit={handleSave}
       class="flex min-h-0 flex-1 w-full flex-col gap-4 mb-4"
     >
-      <ProseKit editor={editor}>
-        {/* flex-1 min-h-0 makes this fill the remaining space in the
-            form (header row + this), instead of growing with content.
-            Toolbar and the footer below both keep their natural
-            height; the content div takes the rest and scrolls on its
-            own. */}
-        <div class="notes-editor flex min-h-0 flex-1 flex-col">
-          <Toolbar saving={saving()} justSaved={justSaved()} />
-          <div
-            ref={mountEditor}
-            class="ProseMirror notes-editor-content min-h-0 flex-1 overflow-y-auto"
-          />
-        </div>
-      </ProseKit>
+      <TextEditor
+        initialContent={props.initialContent}
+        saving={saving()}
+        justSaved={justSaved()}
+        onReady={(readyEditor) => (editor = readyEditor)}
+      />
       {error() && <p class="text-sm text-[#dc3545]">{error()}</p>}
     </form>
   );

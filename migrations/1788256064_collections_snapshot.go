@@ -1137,6 +1137,17 @@ func init() {
 						"type": "json"
 					},
 					{
+						"help": "",
+						"hidden": false,
+						"id": "json1874629670",
+						"maxSize": 0,
+						"name": "tags",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "json"
+					},
+					{
 						"hidden": false,
 						"id": "autodate2990389176",
 						"name": "created",
