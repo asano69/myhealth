@@ -37,12 +37,12 @@
    * saturated) as the rate rises. Dark mode uses brighter stops for
    * the higher rates instead of literally darker ones, since a
    * near-black blue would disappear against a dark background. */
-  --color-heat-empty: light-dark(#ebedf0, #161b22);
-  --color-heat-0: light-dark(#fca5a5, #7f1d1d);
-  --color-heat-33: light-dark(#bfdbfe, #1e3a8a);
-  --color-heat-50: light-dark(#60a5fa, #1d4ed8);
-  --color-heat-66: light-dark(#3b82f6, #2563eb);
-  --color-heat-100: light-dark(#1e3a8a, #60a5fa);
+  --color-heat-empty: light-dark(#ebedf0, #2a313c);
+  --color-heat-0: light-dark(#cc0000, #7f1d1d);
+  --color-heat-33: light-dark(#aceebb, #1b4721);
+  --color-heat-50: light-dark(#4ac26b, #2b6a30);
+  --color-heat-66: light-dark(#2da44e, #46954a);
+  --color-heat-100: light-dark(#116329, #6bc46d);
 
   /* Reusable box-shadow presets, modeled on GitHub Primer's shadow
    * scale: low-opacity black, tight offsets/blur. The border color
