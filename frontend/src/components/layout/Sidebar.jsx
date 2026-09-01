@@ -3,6 +3,8 @@ import { A } from "@solidjs/router";
 
 import BedSingle from "lucide-solid/icons/bed-single";
 import Focus from "lucide-solid/icons/cone";
+import Notebook from "lucide-solid/icons/notebook";
+
 import { loadContexts } from "../../lib/contexts";
 
 // Static top-level nav items, in the order they're shown. Kept as plain
@@ -11,6 +13,7 @@ import { loadContexts } from "../../lib/contexts";
 const NAV_ITEMS = [
   { href: "/sleep", label: "Sleep", icon: BedSingle },
   { href: "/focus", label: "Focus", icon: Focus },
+    { href: "/diary", label: "Diary", icon: Notebook },
 ];
 
 export default function Sidebar(props) {
