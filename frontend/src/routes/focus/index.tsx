@@ -26,6 +26,10 @@ export default function Focus() {
   // Drives each row's dimmed styling (see FocusTaskItem's `dragging`
   // prop) and lets handlePointerMove know which task to move.
   const [draggingId, setDraggingId] = createSignal<string | null>(null);
+  // Bumped on every add/toggle/delete so FocusHeatmap (which fetches
+  // its own data independently) knows to refetch instead of showing
+  // stale achievement rates.
+  const [refreshKey, setRefreshKey] = createSignal(0);
   // Plain (non-reactive) map of task id -> row element, populated via
   // FocusTaskItem's rowRef prop. Only used to measure row positions
   // during a drag, so it doesn't need to be a Solid store.
@@ -60,18 +64,20 @@ export default function Focus() {
   // gaps left by earlier deletes or reorders.
   const nextPosition = () =>
     tasks().length === 0 ? 0 : Math.max(...tasks().map((t) => t.position)) + 1;
-
   const handleAdded = (record: FocusTaskRecord) => {
     setTasks((prev) => [...prev, record]);
+    setRefreshKey((k) => k + 1);
   };
 
   const handleChanged = (record: FocusTaskRecord) => {
     setTasks((prev) => prev.map((t) => (t.id === record.id ? record : t)));
+    setRefreshKey((k) => k + 1);
   };
 
   const handleDeleted = (task: FocusTaskRecord) => {
     rowRefs.delete(task.id);
     setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    setRefreshKey((k) => k + 1);
   };
 
   // Drag-to-reorder: pointer events instead of native HTML5
@@ -186,7 +192,7 @@ export default function Focus() {
         />
       </Show>
 
-      <FocusHeatmap />
+      <FocusHeatmap refreshKey={refreshKey()} />
     </div>
   );
 }

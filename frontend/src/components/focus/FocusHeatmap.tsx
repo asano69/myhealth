@@ -77,16 +77,30 @@ async function fetchRecentTasks(rangeStart: string) {
   });
 }
 
+export interface FocusHeatmapProps {
+  // Bumped by the parent whenever a task is added, toggled, or
+  // deleted, so this component refetches instead of showing stale
+  // achievement rates (it fetches its own data, separately from the
+  // parent's day-by-day task list).
+  refreshKey?: number;
+}
+
 // GitHub-style contribution calendar for the Focus page: each cell is
 // one day, colored by that day's task achievement rate rather than
 // task count. Fetches its own data (like TagSelect fetches
 // diary_tags), since it covers a much wider date range than the
 // day-by-day task list above it.
-export default function FocusHeatmap() {
+export default function FocusHeatmap(props: FocusHeatmapProps) {
   const rangeStart = startOfWeek(
     shiftDate(todayDate(), -(WEEKS_TO_SHOW - 1) * 7),
   );
-  const [tasks] = createResource(() => fetchRecentTasks(rangeStart));
+  // refreshKey is the resource's reactive source: whenever it changes,
+  // the fetcher re-runs. rangeStart itself never changes, so it's read
+  // from the closure instead of being part of the source.
+  const [tasks] = createResource(
+    () => props.refreshKey,
+    () => fetchRecentTasks(rangeStart),
+  );
   const [selected, setSelected] = createSignal<DayCell | null>(null);
 
   const weeks = createMemo(() => {
