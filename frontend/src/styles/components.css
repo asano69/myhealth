@@ -99,6 +99,6 @@
    * GitHub's own contribution graph. Sized to match GitHub's own
    * cells (~10px). */
   .heat-cell {
-    @apply h-2.5 w-2.5 shrink-0 cursor-pointer rounded-[2px] transition-colors;
+    @apply h-3 w-3 shrink-0 cursor-pointer rounded-[2px] transition-colors;
   }
 }

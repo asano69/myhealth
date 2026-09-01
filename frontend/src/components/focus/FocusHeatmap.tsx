@@ -20,7 +20,7 @@ const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 
 const monthFormatter = new Intl.DateTimeFormat("en-GB", { month: "short" });
 
-type RateCategory = "none" | "0" | "33" | "50" | "66" | "100";
+type RateCategory = "none" | "0" | "33" | "50" | "66" | "100" | "future";
 
 interface DayCell {
   date: string;
@@ -41,6 +41,9 @@ const CATEGORY_COLORS: Record<RateCategory, string> = {
   "50": "var(--color-heat-50)",
   "66": "var(--color-heat-66)",
   "100": "var(--color-heat-100)",
+  // Days after today have no data yet, so they're transparent rather
+  // than the "no tasks" gray, matching GitHub's contribution graph.
+  future: "transparent",
 };
 
 // The achievement rate is derived from (done, total) directly instead
@@ -95,11 +98,18 @@ export default function FocusHeatmap() {
       byDate.set(task.date, entry);
     }
 
+    // Computed once per memo run rather than per day, and compared as
+    // plain "YYYY-MM-DD" strings, which sort/compare correctly since
+    // the format is zero-padded and lexicographic order matches
+    // chronological order.
+    const today = todayDate();
+
     const days: DayCell[] = [];
     for (let i = 0; i < WEEKS_TO_SHOW * 7; i++) {
       const date = shiftDate(rangeStart, i);
       const { done = 0, total = 0 } = byDate.get(date) ?? {};
-      days.push({ date, done, total, category: rateCategory(done, total) });
+      const category = date > today ? "future" : rateCategory(done, total);
+      days.push({ date, done, total, category });
     }
 
     // Reshaped into columns of 7 (Sun-Sat), one per week, so the
@@ -144,7 +154,7 @@ export default function FocusHeatmap() {
             <div class="w-6 shrink-0" />
             <For each={monthLabels()}>
               {(label) => (
-                <span class="w-2.5 shrink-0 overflow-visible text-[10px] whitespace-nowrap">
+                <span class="w-3 shrink-0 overflow-visible text-[12px] whitespace-nowrap">
                   {label}
                 </span>
               )}
@@ -157,7 +167,7 @@ export default function FocusHeatmap() {
             <div class="flex w-6 shrink-0 flex-col gap-0.5">
               <For each={WEEKDAY_LABELS}>
                 {(label) => (
-                  <span class="h-2.5 text-[10px] leading-[10px] text-">
+                  <span class="h-3 text-[12px] leading-[12px] text-">
                     {label}
                   </span>
                 )}
