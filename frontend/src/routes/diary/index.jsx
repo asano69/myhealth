@@ -110,7 +110,7 @@ function DiaryForm(props) {
     // scroll internally rather than the whole page scrolling.
     <form
       onSubmit={handleSave}
-      class="flex min-h-0 flex-1 w-full flex-col gap-4 mb-4"
+      class="flex min-h-0 flex-1 w-full flex-col gap-4 mb-20"
     >
       <TagSelect value={tags()} onChange={setTags} />
       <TextEditor
