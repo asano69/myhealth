@@ -1,9 +1,12 @@
 import { createSignal, onMount, onCleanup, For, Show } from "solid-js";
+import ChevronLeft from "lucide-solid/icons/chevrons-left";
+import ChevronRight from "lucide-solid/icons/chevrons-right";
 
 import pb from "../../lib/pb";
 import FocusTaskItem from "../../components/focus/FocusTaskItem";
 import FocusTaskForm from "../../components/focus/FocusTaskForm";
 import type { FocusTaskRecord } from "../../components/focus/FocusTaskForm";
+import { formatDisplayDate, shiftDate } from "../../lib/date";
 
 const MAX_TASKS = 3;
 
@@ -24,6 +27,9 @@ function todayDate(): string {
 // record each mutation reports back.
 export default function Focus() {
   const [tasks, setTasks] = createSignal<FocusTaskRecord[]>([]);
+  // The day currently being viewed, defaulting to today. Navigated via
+  // the chevron buttons below the title (see changeDate).
+  const [selectedDate, setSelectedDate] = createSignal(todayDate());
   // Task id currently being dragged, or null when nothing is dragging.
   // Drives each row's dimmed styling (see FocusTaskItem's `dragging`
   // prop) and lets handlePointerMove know which task to move.
@@ -38,7 +44,7 @@ export default function Focus() {
       const result = await pb
         .collection("focus_tasks")
         .getFullList<FocusTaskRecord>({
-          filter: pb.filter("date = {:date}", { date: todayDate() }),
+          filter: pb.filter("date = {:date}", { date: selectedDate() }),
           sort: "position",
         });
       setTasks(result);
@@ -48,6 +54,14 @@ export default function Focus() {
   };
 
   onMount(loadTasks);
+
+  // Moves the viewed day backward or forward and reloads that day's
+  // tasks. Signal updates apply synchronously, so loadTasks already
+  // sees the new selectedDate() when it reads it.
+  const changeDate = (days: number) => {
+    setSelectedDate((d) => shiftDate(d, days));
+    loadTasks();
+  };
 
   // Position for a newly created task: one past the current highest
   // position, so it's always appended at the end regardless of any
@@ -155,6 +169,30 @@ export default function Focus() {
     <div class="flex w-full flex-col gap-4 xl:mx-auto xl:max-w-3xl">
       <h1 class="mb-4 font-sans text-4xl">Focus</h1>
 
+      {/* Date navigation: shows the viewed day, with chevrons to step
+          it back/forward one day at a time (see changeDate above). */}
+      <div class="mb-4 flex items-center justify-center gap-3">
+        <button
+          type="button"
+          aria-label="Previous day"
+          class="icon-btn"
+          onClick={() => changeDate(-1)}
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <span class="font-mono text-md">
+          {formatDisplayDate(selectedDate())}
+        </span>
+        <button
+          type="button"
+          aria-label="Next day"
+          class="icon-btn"
+          onClick={() => changeDate(1)}
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
       <div class="flex flex-col [&>*]:border-b [&>*]:border-border [&>*:last-child]:border-b-0">
         <For each={tasks()}>
           {(task) => (
@@ -175,7 +213,7 @@ export default function Focus() {
           this list is deliberately capped -- see MAX_TASKS above. */}
       <Show when={tasks().length < MAX_TASKS}>
         <FocusTaskForm
-          date={todayDate()}
+          date={selectedDate()}
           hasExistingTasks={tasks().length > 0}
           nextPosition={nextPosition()}
           onAdded={handleAdded}

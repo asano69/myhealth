@@ -22,3 +22,14 @@ export function formatDisplayDate(date) {
   const parsed = new Date(`${date}T00:00:00Z`);
   return displayFormatter.format(parsed);
 }
+
+// Shifts a "YYYY-MM-DD" date string by the given number of days
+// (positive or negative), returning the result in the same
+// "YYYY-MM-DD" format. Parsed/shifted in UTC (see formatDisplayDate
+// above) so day-of-month arithmetic doesn't drift across timezones
+// behind UTC.
+export function shiftDate(date, days) {
+  const parsed = new Date(`${date}T00:00:00Z`);
+  parsed.setUTCDate(parsed.getUTCDate() + days);
+  return parsed.toISOString().slice(0, 10);
+}
