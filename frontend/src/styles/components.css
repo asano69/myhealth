@@ -91,34 +91,12 @@
     margin: 0.75em 0;
   }
 
-  /* Cells for the Focus achievement heatmap (see
-   * components/focus/FocusHeatmap.tsx). heat-none stays transparent so
-   * a day with no tasks created reads as empty, not as 0% achieved. */
+  /* Cell for the Focus achievement heatmap (see
+   * components/focus/FocusHeatmap.tsx). Background color is set inline
+   * per-cell in the component, not here, so it always applies
+   * regardless of Tailwind's cascade layer ordering. Sized to match
+   * GitHub's own contribution graph (~10px cells). */
   .heat-cell {
-    @apply h-3.5 w-3.5 cursor-pointer rounded-sm border border-border transition-colors;
-  }
-
-  .heat-none {
-    background-color: transparent;
-  }
-
-  .heat-0 {
-    background-color: var(--color-heat-0);
-  }
-
-  .heat-33 {
-    background-color: var(--color-heat-33);
-  }
-
-  .heat-50 {
-    background-color: var(--color-heat-50);
-  }
-
-  .heat-66 {
-    background-color: var(--color-heat-66);
-  }
-
-  .heat-100 {
-    background-color: var(--color-heat-100);
+    @apply h-2.5 w-2.5 shrink-0 cursor-pointer rounded-[2px] border border-border transition-colors;
   }
 }
