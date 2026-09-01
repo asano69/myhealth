@@ -83,7 +83,12 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
     <div
       ref={props.rowRef}
       class="flex flex-col gap-1 rounded-md border border-border bg-card p-1 shadow-card transition-opacity"
-      classList={{ "opacity-40": props.dragging }}
+      // Dragging takes priority (opacity-40) since it needs to stand
+      // out more sharply than the milder "done" fade (opacity-50).
+      classList={{
+        "opacity-40": props.dragging,
+        "opacity-50": !props.dragging && props.task.done,
+      }}
     >
       <div class="flex items-center gap-3">
         {/* Drag handle: pointer events instead of native HTML5
@@ -130,13 +135,9 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
             separate edit button/dialog. */}
         <Show
           when={editing()}
-          fallback={
-            // Matches TextField.Input's border/padding below (border
-            // border-transparent py-2) so the row's height doesn't
-            // shift when swapping between display and edit mode.
+          fallback={ 
             <span
               class="flex-1 cursor-text border border-transparent py-2"
-              classList={{ "line-through text-border": props.task.done }}
               onClick={startEdit}
             >
               {props.task.title}
