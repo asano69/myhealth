@@ -48,7 +48,7 @@ export default function SaveButton(props) {
         class="my-1.5 cursor-pointer appearance-none rounded-md bg-[#28a745] px-4 py-2 font-sans text-base font-bold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40 enabled:hover:bg-[#23923d]"
         disabled={props.saving || !dirty()}
       >
-        {props.saving ? "Saving…" : props.justSaved ? "Saved" : "Save note"}
+        {props.saving ? "Saving…" : props.justSaved ? "Saved" : "Save"}
       </button>
     </div>
   );
