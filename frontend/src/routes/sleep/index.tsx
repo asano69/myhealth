@@ -35,8 +35,8 @@ export default function Sleep() {
 
   return (
     <div class="flex w-full flex-col gap-6 xl:mx-auto xl:max-w-3xl">
-      <h1 class="mb-4 font-sans text-4xl">Sleep</h1>
       <DateNav date={selectedDate()} onChange={setSelectedDate} />
+      <h1 class="mb-4 font-sans text-4xl">Sleep</h1>
       <SleepLogForm date={selectedDate()} onSaved={loadRecent} />
       <SleepChart logs={logs()} />
       <SleepLogTable logs={logs()} />

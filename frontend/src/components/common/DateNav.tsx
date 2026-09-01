@@ -17,7 +17,11 @@ export default function DateNav(props: DateNavProps) {
   };
 
   return (
-    <div class="mb-4 flex items-center justify-center gap-3">
+    // Sticky "second bar" right under TopBar: sticks to the top of
+    // <main>'s own scroll area (see MainLayout) once the page scrolls
+    // past it, so date navigation stays visible without every page
+    // needing its own header row.
+    <div class="sticky flex items-center justify-center gap-3">
       <button
         type="button"
         aria-label="Previous day"
@@ -26,7 +30,7 @@ export default function DateNav(props: DateNavProps) {
       >
         <ChevronLeft size={20} />
       </button>
-      <span class="font-mono text-xl">{formatDisplayDate(props.date)}</span>
+      <span class="font-serif text-lg">{formatDisplayDate(props.date)}</span>
       <button
         type="button"
         aria-label="Next day"

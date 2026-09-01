@@ -39,8 +39,8 @@ export default function Diary() {
 
   return (
     <div class="flex h-full min-h-0 w-full flex-col gap-4">
-      <h1 class="font-sans text-4xl">Diary</h1>
       <DateNav date={selectedDate()} onChange={setSelectedDate} />
+      <h1 class="font-sans text-4xl">Diary</h1>
       <Show when={!entry.loading} fallback={<Loading />}>
         <DiaryForm
           date={selectedDate()}

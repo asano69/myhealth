@@ -31,9 +31,7 @@ async function findLogByDate(date: string): Promise<SleepLogRecord | null> {
   try {
     return await pb
       .collection("sleep_logs")
-      .getFirstListItem<SleepLogRecord>(
-        pb.filter("date = {:date}", { date }),
-      );
+      .getFirstListItem<SleepLogRecord>(pb.filter("date = {:date}", { date }));
   } catch {
     // No log for this date yet.
     return null;
@@ -130,10 +128,7 @@ export default function SleepLogForm(props: SleepLogFormProps) {
         <div class="flex gap-4">
           <For each={SATISFACTION_VALUES}>
             {(value) => (
-              <RadioGroup.Item
-                value={value}
-                class="flex items-center gap-1.5"
-              >
+              <RadioGroup.Item value={value} class="flex items-center gap-1.5">
                 <RadioGroup.ItemInput />
                 <RadioGroup.ItemControl class="flex h-4 w-4 items-center justify-center rounded-full border border-border data-[checked]:border-text">
                   <RadioGroup.ItemIndicator class="h-2 w-2 rounded-full bg-text" />

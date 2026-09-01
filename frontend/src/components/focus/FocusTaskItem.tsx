@@ -137,11 +137,7 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
             </span>
           }
         >
-          <TextField
-            value={editValue()}
-            onChange={setEditValue}
-            class="flex-1"
-          >
+          <TextField value={editValue()} onChange={setEditValue} class="flex-1">
             <TextField.Input
               autofocus
               onBlur={commitEdit}

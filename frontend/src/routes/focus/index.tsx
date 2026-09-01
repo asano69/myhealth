@@ -58,9 +58,7 @@ export default function Focus() {
   // position, so it's always appended at the end regardless of any
   // gaps left by earlier deletes or reorders.
   const nextPosition = () =>
-    tasks().length === 0
-      ? 0
-      : Math.max(...tasks().map((t) => t.position)) + 1;
+    tasks().length === 0 ? 0 : Math.max(...tasks().map((t) => t.position)) + 1;
 
   const handleAdded = (record: FocusTaskRecord) => {
     setTasks((prev) => [...prev, record]);
@@ -158,9 +156,8 @@ export default function Focus() {
 
   return (
     <div class="flex w-full flex-col gap-4 xl:mx-auto xl:max-w-3xl">
-      <h1 class="mb-4 font-sans text-4xl">Focus</h1>
-
       <DateNav date={selectedDate()} onChange={handleDateChange} />
+      <h1 class="mb-4 font-sans text-4xl">Focus</h1>
 
       <div class="flex flex-col [&>*]:border-b [&>*]:border-border [&>*:last-child]:border-b-0">
         <For each={tasks()}>
@@ -176,7 +173,6 @@ export default function Focus() {
           )}
         </For>
       </div>
-
 
       {/* Hidden once today's 3 tasks are already registered, since
           this list is deliberately capped -- see MAX_TASKS above. */}

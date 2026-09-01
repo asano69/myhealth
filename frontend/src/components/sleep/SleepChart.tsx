@@ -47,15 +47,9 @@ export default function SleepChart(props: SleepChartProps) {
     const innerWidth = WIDTH - MARGIN.left - MARGIN.right;
     const innerHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
 
-    const minutesExtent = d3.extent(data, (d) => d.minutes) as [
-      number,
-      number,
-    ];
+    const minutesExtent = d3.extent(data, (d) => d.minutes) as [number, number];
 
-    const x = d3
-      .scaleLinear()
-      .domain([1, data.length])
-      .range([0, innerWidth]);
+    const x = d3.scaleLinear().domain([1, data.length]).range([0, innerWidth]);
 
     const y = d3
       .scaleLinear()
@@ -69,7 +63,7 @@ export default function SleepChart(props: SleepChartProps) {
     // (rather than brightening) so the points don't glare against a
     // dark background; the two palettes are combined via CSS
     // light-dark(), same pattern as theme.css.
-    const REDBLUE_LIGHT =  ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
+    const REDBLUE_LIGHT = ["#ca0020", "#f4a582", "#92c5de", "#0571b0"];
     const REDBLUE_DARK = REDBLUE_LIGHT.map((c) =>
       d3.color(c).darker(1).formatHex(),
     );
