@@ -55,7 +55,7 @@ export default function Sidebar(props) {
                 href={item.href}
                 end
                 activeClass="bg-active-bg"
-                class="flex items-center gap-2 rounded-md px-2 py-1.5 text-text transition-colors hover:bg-hover-bg"
+                class="flex items-center gap-2 rounded-md px-2 py-2.5 text-text transition-colors hover:bg-hover-bg"
               >
                 <item.icon size={20} />
                 {item.label}
