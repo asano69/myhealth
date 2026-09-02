@@ -24,7 +24,7 @@ export default [
   {
     // Root-level config files (vite.config.js, etc.) run under Node,
     // not the browser, so they need Node globals like `process`.
-    files: ["*.config.js"],
+    files: ["*.config.{js,ts}"],
     languageOptions: {
       globals: {
         ...globals.node,
