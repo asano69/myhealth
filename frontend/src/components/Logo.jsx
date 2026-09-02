@@ -1,5 +1,7 @@
-import { createResource, Show } from "solid-js";
+import { Show } from "solid-js";
 import { A } from "@solidjs/router";
+
+import { useVersion } from "../lib/version";
 
 // size: overall pixel size of the icon (width == height). Defaults to
 // 40px (the old fixed "h-10 w-10" Tailwind size).
@@ -10,14 +12,9 @@ import { A } from "@solidjs/router";
 // onClick: if provided, the logo becomes a plain clickable button
 // instead of a link, and `linkable` is ignored.
 export default function Logo(props) {
-  // Fetches the running server version from the public, unauthenticated
-  // /api/version endpoint (see internal/serve/handler.go), instead of
-  // hardcoding it here.
-  const [version] = createResource(async () => {
-    const res = await fetch("/api/version");
-    const data = await res.json();
-    return data.version;
-  });
+  // Shared with Sidebar's footer (see lib/version.ts), so both display
+  // the same value from one fetch implementation.
+  const version = useVersion();
 
   const size = () => props.size ?? 30;
   const icon = (

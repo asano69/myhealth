@@ -5,6 +5,8 @@ import BedSingle from "lucide-solid/icons/bed-single";
 import Focus from "lucide-solid/icons/cone";
 import Notebook from "lucide-solid/icons/notebook";
 
+import { useVersion } from "../../lib/version";
+
 // Static top-level nav items, in the order they're shown. Kept as plain
 // data so each entry is just a {href, label, icon} tuple instead of
 // duplicating the same <A> markup per page.
@@ -15,6 +17,8 @@ const NAV_ITEMS = [
 ];
 
 export default function Sidebar(props) {
+  const version = useVersion();
+
   return (
     <>
       {/* Overlay only exists on mobile, where the sidebar floats above
@@ -63,6 +67,12 @@ export default function Sidebar(props) {
             )}
           </For>
         </nav>
+
+        {/* mt-auto pins this to the bottom of the sidebar regardless of
+            how tall the nav list above ends up being. */}
+        <footer class="mt-auto border-t border-border p-2 text-center font-mono text-xs text-border">
+          <Show when={version()}>v{version()}</Show>
+        </footer>
       </aside>
     </>
   );
