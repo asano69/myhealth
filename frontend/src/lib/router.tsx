@@ -17,7 +17,7 @@ export default function AppRouter() {
     <Router root={AppShell}>
       {/* Diary is the app's primary page, so "/" redirects straight to
           it instead of rendering a separate placeholder home page. */}
-      <Route path="/" component={() => <Navigate href="/diary" />} />
+      <Route path="/" component={() => <Navigate href="/Focus" />} />
       <Route path="/sleep" component={Sleep} />
       <Route path="/focus" component={Focus} />
       <Route path="/diary" component={Diary} />
