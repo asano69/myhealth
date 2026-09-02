@@ -1,3 +1,4 @@
+// frontend/src/lib/router.tsx
 import { Router, Route, Navigate } from "@solidjs/router";
 
 import AppShell from "../components/layout/AppShell";

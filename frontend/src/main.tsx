@@ -1,3 +1,4 @@
+// frontend/src/main.tsx
 import { render } from "solid-js/web";
 
 // Self-hosted font for date headings (see theme.css's --font-display).
@@ -20,5 +21,5 @@ render(
       </AuthGate>
     </>
   ),
-  document.getElementById("root"),
+  document.getElementById("root") as HTMLElement,
 );
