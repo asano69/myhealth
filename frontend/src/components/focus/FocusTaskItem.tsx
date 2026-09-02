@@ -7,6 +7,7 @@ import Trash2 from "lucide-solid/icons/trash-2";
 import GripVertical from "lucide-solid/icons/grip-vertical";
 
 import pb from "../../lib/pb";
+import { playCompletionSound } from "../../lib/completionSound";
 import type { FocusTaskRecord } from "./FocusTaskForm";
 
 export interface FocusTaskItemProps {
@@ -37,11 +38,17 @@ export default function FocusTaskItem(props: FocusTaskItemProps) {
   const [error, setError] = createSignal("");
 
   const toggleDone = async () => {
+    // Captured before the update so the sound only fires on the
+    // not-done -> done transition, not when un-checking a task.
+    const markingDone = !props.task.done;
     try {
       const record = await pb
         .collection("focus_tasks")
-        .update<FocusTaskRecord>(props.task.id, { done: !props.task.done });
+        .update<FocusTaskRecord>(props.task.id, { done: markingDone });
       props.onChanged(record);
+      if (markingDone) {
+        playCompletionSound();
+      }
     } catch {
       setError("Failed to update the task.");
     }
