@@ -22,6 +22,7 @@ import math
 from flask import Flask
 >>>>>>> REPLACE
 ```
+- ファイルを新規作成するときはTypeSciritで記述してください
 
 ## Tech Stack
 
