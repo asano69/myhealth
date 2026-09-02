@@ -25,6 +25,9 @@ export default function TextEditor(props) {
     defaultContent: props.initialContent,
   });
 
+  // Called once at setup to hand the editor instance to the caller;
+  // not meant to re-run if onReady's identity changes after mount.
+  // eslint-disable-next-line solid/reactivity
   props.onReady?.(editor);
 
   // Solid doesn't auto-unmount ref callbacks the way React's new

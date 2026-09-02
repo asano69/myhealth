@@ -60,6 +60,10 @@ function DiaryForm(props) {
   // Tracks the entry's id locally: unset until the first save, at
   // which point it switches from create to update for any further
   // save today without needing a page reload.
+  // Read once: DiaryForm is remounted fresh whenever entryId should
+  // change (see comment above), so this never needs to react to
+  // props.entryId updating.
+  // eslint-disable-next-line solid/reactivity
   const [entryId, setEntryId] = createSignal(props.entryId);
   // Selected tag records (not ids), matching what TagSelect's
   // value/onChange work with. Converted to ids on save.

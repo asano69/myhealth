@@ -25,7 +25,7 @@ export default function Sidebar(props) {
         <div
           class="absolute inset-0 z-20 bg-black/40 transition-opacity duration-200"
           classList={{ "pointer-events-none opacity-0": !props.open }}
-          onClick={props.onClose}
+          onClick={() => props.onClose()}
         />
       </Show>
 
