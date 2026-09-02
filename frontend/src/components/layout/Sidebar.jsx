@@ -70,7 +70,7 @@ export default function Sidebar(props) {
 
         {/* mt-auto pins this to the bottom of the sidebar regardless of
             how tall the nav list above ends up being. */}
-        <footer class="mt-auto border-t border-border p-2 text-center font-mono text-xs text-border">
+        <footer class="mt-auto  p-2  text-border font-mono text-xs">
           <Show when={version()}>v{version()}</Show>
         </footer>
       </aside>
