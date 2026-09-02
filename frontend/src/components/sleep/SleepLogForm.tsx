@@ -129,12 +129,18 @@ export default function SleepLogForm(props: SleepLogFormProps) {
         <div class="flex gap-4">
           <For each={SATISFACTION_VALUES}>
             {(value) => (
-              <RadioGroup.Item value={value} class="flex items-center gap-1.5">
+              // py-2 pr-2 widens the tap target well past the visual
+              // circle, so the whole label row is tappable, not just
+              // the small circle itself.
+              <RadioGroup.Item
+                value={value}
+                class="flex cursor-pointer items-center gap-2 py-2 pr-2"
+              >
                 <RadioGroup.ItemInput />
-                <RadioGroup.ItemControl class="flex h-4 w-4 items-center justify-center rounded-full border border-border data-[checked]:border-text">
-                  <RadioGroup.ItemIndicator class="h-2 w-2 rounded-full bg-text" />
+                <RadioGroup.ItemControl class="flex h-7 w-7 items-center justify-center rounded-full border border-border data-[checked]:border-text">
+                  <RadioGroup.ItemIndicator class="h-3.5 w-3.5 rounded-full bg-text" />
                 </RadioGroup.ItemControl>
-                <RadioGroup.ItemLabel class="text-sm text-text">
+                <RadioGroup.ItemLabel class="text-base text-text">
                   {value}
                 </RadioGroup.ItemLabel>
               </RadioGroup.Item>
