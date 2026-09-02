@@ -166,6 +166,17 @@ export default function Focus() {
       <DateNav date={selectedDate()} onChange={handleDateChange} />
       <h1 class="mb-4 font-sans text-4xl">Focus</h1>
 
+      <FocusHeatmap refreshKey={refreshKey()} />
+      {/* Hidden once today's 3 tasks are already registered, since
+          this list is deliberately capped -- see MAX_TASKS above. */}
+      <Show when={tasks().length < MAX_TASKS}>
+        <FocusTaskForm
+          date={selectedDate()}
+          hasExistingTasks={tasks().length > 0}
+          nextPosition={nextPosition()}
+          onAdded={handleAdded}
+        />
+      </Show>
       <div class="flex flex-col gap-2">
         <For each={tasks()}>
           {(task) => (
@@ -180,19 +191,6 @@ export default function Focus() {
           )}
         </For>
       </div>
-
-      {/* Hidden once today's 3 tasks are already registered, since
-          this list is deliberately capped -- see MAX_TASKS above. */}
-      <Show when={tasks().length < MAX_TASKS}>
-        <FocusTaskForm
-          date={selectedDate()}
-          hasExistingTasks={tasks().length > 0}
-          nextPosition={nextPosition()}
-          onAdded={handleAdded}
-        />
-      </Show>
-
-      <FocusHeatmap refreshKey={refreshKey()} />
     </div>
   );
 }
